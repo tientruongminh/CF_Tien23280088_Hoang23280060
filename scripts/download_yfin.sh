@@ -5,7 +5,7 @@ INPUT="${1:-american_companies/nasdaq-listed.csv}"
 OUTDIR="${2:-data/yfinance}"
 LOGDIR="${3:-logs}"
 FILTER_MODE="${4:-pre}"          # off | pre | post
-MIN_ROWS="${5:-2000}"             # minimum number of rows for post filter
+MIN_YEARS="${5:-10}"             # minimum number of rows for filtering 
 
 mkdir -p "$OUTDIR" "$LOGDIR"
 
