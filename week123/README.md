@@ -162,16 +162,33 @@ $$
 
 ## 4.5. How to run && results
 ```bash
-Backtest summary:
-  initial_capital: 10000.0000
-  final_equity: 8572.0321
-  total_return: -0.1428
-  annualized_return: -0.0153
-  annualized_volatility: 0.2279
-  sharpe_ratio: -0.0672
-  max_drawdown: -0.4756
-  n_days: 2514
-  n_trades: 48
+!bash week123/scripts/run_strategy.sh ATLO
+
+# Backtest summary:
+#   initial_capital: 10000.0000
+#   final_equity: 8572.0321
+#   total_return: -0.1428
+#   annualized_return: -0.0153
+#   annualized_volatility: 0.2279
+#   sharpe_ratio: -0.0672
+#   max_drawdown: -0.4756
+#   n_days: 2514
+#   n_trades: 48
+```
+
+```bash
+!bash week123/scripts/run_strategy.sh ATOS
+
+# Backtest summary:
+#   initial_capital: 10000.0000
+#   final_equity: 855.4787
+#   total_return: -0.9145
+#   annualized_return: -0.2184
+#   annualized_volatility: 0.6244
+#   sharpe_ratio: -0.3498
+#   max_drawdown: -0.9833
+#   n_days: 2514
+#   n_trades: 42
 ```
 
 
