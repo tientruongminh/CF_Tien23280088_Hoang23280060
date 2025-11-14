@@ -160,6 +160,20 @@ $$
   - Execute trades at next-day Open
   - Transaction costs optional (default 0)
 
+## 4.5. How to run && results
+```bash
+Backtest summary:
+  initial_capital: 10000.0000
+  final_equity: 8572.0321
+  total_return: -0.1428
+  annualized_return: -0.0153
+  annualized_volatility: 0.2279
+  sharpe_ratio: -0.0672
+  max_drawdown: -0.4756
+  n_days: 2514
+  n_trades: 48
+```
+
 
 ## 5. Design Fundamental-Based Trading Strategies (Optional)
 
