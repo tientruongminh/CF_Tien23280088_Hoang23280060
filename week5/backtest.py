@@ -1,4 +1,5 @@
 from typing import Dict
+import os
 
 import numpy as np
 import pandas as pd
@@ -59,15 +60,47 @@ def performance_summary(df: pd.DataFrame, ret_col: str = "strategy_ret_net") -> 
     return out
 
 
-def plot_equity_curves(curves: Dict[str, pd.Series], title: str = "Equity curves") -> None:
+def plot_equity_curves(
+    curves: Dict[str, pd.Series],
+    title: str = "Equity curves",
+    symbol: str = "output",
+    save_dir: str = "plots",
+    show: bool = True
+) -> str:
     """
-    Vẽ nhiều equity curve trên cùng một hình.
+    Vẽ và lưu nhiều equity curve trên cùng một biểu đồ.
+    
+    save_dir: thư mục lưu hình
+    symbol: tên file (không cần đuôi .png)
+    show: True → plt.show(), False → không hiện (dùng khi chạy server)
+    
+    Trả về: đường dẫn file .png đã lưu
     """
+
+    # Tạo thư mục nếu chưa tồn tại
+    os.makedirs(save_dir, exist_ok=True)
+
+    # Tạo đường dẫn file
+    filepath = os.path.join(save_dir, f"equity_curves_{symbol}.png")
+
+    # Vẽ biểu đồ
     plt.figure(figsize=(12, 4))
     for name, series in curves.items():
         series.plot(label=name)
+
     plt.legend()
     plt.grid(True)
     plt.title(title)
     plt.tight_layout()
-    plt.show()
+
+    # Lưu file
+    plt.savefig(filepath, dpi=300)
+
+    # Chỉ show nếu muốn
+    if show:
+        plt.show()
+    else:
+        plt.close()
+
+    print(f"Saved plot: {filepath}")
+    return filepath
