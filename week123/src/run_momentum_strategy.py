@@ -72,7 +72,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     run_momentum_example(
-        csv_path=args.csv_paths,
+        csv_paths=args.csv_paths,
         lookback_months=args.lookback_months,
         skip_recent_months=args.skip_recent_months,
         n_long=args.n_long,
