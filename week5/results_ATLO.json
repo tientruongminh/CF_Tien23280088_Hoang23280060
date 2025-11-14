@@ -1,0 +1,58 @@
+{
+    "Bollinger": {
+        "n_periods": 2512,
+        "mean_daily": -0.0003426749400250027,
+        "vol_daily": 0.01897383220112046,
+        "ann_return": -0.08635408488630068,
+        "ann_vol": 0.30120024853220406,
+        "sharpe": -0.2866999124573026
+    },
+    "Volatility Trend": {
+        "n_periods": 2512,
+        "mean_daily": -0.000859799833889456,
+        "vol_daily": 0.010080569835518442,
+        "ann_return": -0.2166695581401429,
+        "ann_vol": 0.1600240851516065,
+        "sharpe": -1.3539809206524793
+    },
+    "ARIMA ar1": {
+        "n_periods": 2512,
+        "mean_daily": 0.0,
+        "vol_daily": 0.0,
+        "ann_return": 0.0,
+        "ann_vol": 0.0,
+        "sharpe": 0.0
+    },
+    "ARIMA ma1": {
+        "n_periods": 2512,
+        "mean_daily": 0.0,
+        "vol_daily": 0.0,
+        "ann_return": 0.0,
+        "ann_vol": 0.0,
+        "sharpe": 0.0
+    },
+    "ARIMA arima_1_1_1": {
+        "n_periods": 2512,
+        "mean_daily": 0.0,
+        "vol_daily": 0.0,
+        "ann_return": 0.0,
+        "ann_vol": 0.0,
+        "sharpe": 0.0
+    },
+    "Kalman": {
+        "n_periods": 2512,
+        "mean_daily": -0.0012949148416538333,
+        "vol_daily": 0.019064829627104842,
+        "ann_return": -0.326318540096766,
+        "ann_vol": 0.30264478788681415,
+        "sharpe": -1.078222897460919
+    },
+    "Particle Filter": {
+        "n_periods": 2512,
+        "mean_daily": -0.0019352048130160384,
+        "vol_daily": 0.019033687133844974,
+        "ann_return": -0.4876716128800417,
+        "ann_vol": 0.3021504161325814,
+        "sharpe": -1.6140027841830107
+    }
+}
