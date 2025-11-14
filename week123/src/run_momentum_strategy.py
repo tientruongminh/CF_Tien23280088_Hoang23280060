@@ -3,12 +3,12 @@ from __future__ import annotations
 import argparse
 import os
 
-from momentum_data import load_price_panel, to_monthly_prices, monthly_log_returns
+from momentum_data import load_price_panel_from_files, to_monthly_prices, monthly_log_returns
 from momentum_backtest import backtest_cross_sectional_momentum
 
 
 def run_momentum_example(
-    csv_path: str,
+    csv_paths: list,
     lookback_months: int = 1,
     skip_recent_months: int = 0,
     n_long: int = 10,
@@ -17,11 +17,8 @@ def run_momentum_example(
     short_capital: float = 0.5,
 ) -> None:
 
-    if not os.path.exists(csv_path):
-        raise FileNotFoundError(f"Could not find CSV at '{csv_path}'.")
-
     # 1. Load daily prices
-    daily_prices = load_price_panel(csv_path, price_col="Close", symbol_col="Symbol")
+    daily_prices = load_price_panel_from_files(csv_paths, price_col="Close", symbol_col="Symbol")
 
     # 2. Resample to month end
     monthly_prices = to_monthly_prices(daily_prices, method="last")
@@ -55,8 +52,9 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Run cross sectional momentum backtest")
 
     parser.add_argument(
-        "--csv_path",
+        "--csv_paths",
         type=str,
+        nargs="+",
         required=True,
         help="Path to input CSV that contains daily prices"
     )
@@ -74,7 +72,7 @@ def parse_args():
 if __name__ == "__main__":
     args = parse_args()
     run_momentum_example(
-        csv_path=args.csv_path,
+        csv_path=args.csv_paths,
         lookback_months=args.lookback_months,
         skip_recent_months=args.skip_recent_months,
         n_long=args.n_long,

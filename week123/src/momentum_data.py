@@ -49,6 +49,42 @@ def load_price_panel(
 
     return prices
 
+def load_price_panel_from_files(
+    paths: List[str],
+    price_col: str = "Close",
+    symbol_col: str = "Symbol",
+) -> pd.DataFrame:
+    """
+    Load daily prices from multiple CSVs and build a Date x Symbol price panel.
+    Each CSV must have Date, price_col, and symbol_col (e.g. one stock per file).
+    """
+    frames = []
+    for p in paths:
+        df = pd.read_csv(p)
+        df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+        df = df.dropna(subset=["Date"])
+
+        if price_col not in df.columns:
+            raise KeyError(f"Price column '{price_col}' not found in file {p}.")
+        if symbol_col not in df.columns:
+            raise KeyError(f"Symbol column '{symbol_col}' not found in file {p}.")
+
+        df[price_col] = pd.to_numeric(df[price_col], errors="coerce")
+        df = df.dropna(subset=[price_col])
+
+        frames.append(df[["Date", symbol_col, price_col]])
+
+    if not frames:
+        raise ValueError("No data loaded from given paths.")
+
+    all_df = pd.concat(frames, ignore_index=True)
+    all_df = all_df.sort_values("Date")
+
+    prices = all_df.pivot(index="Date", columns=symbol_col, values=price_col)
+    prices.index.name = "Date"
+
+    return prices
+
 
 def to_monthly_prices(
     daily_prices: pd.DataFrame,
