@@ -1,3 +1,5 @@
+# main.py
+
 import argparse
 import json
 import os
@@ -6,139 +8,275 @@ from typing import Dict
 import pandas as pd
 
 from data import load_single_stock_csv, add_volatility_features
-from models import (
-    bollinger_mean_reversion_signal,
-    volatility_position_sizing,
-    build_signals_ar_ma_arima,
-    kalman_filter_trend,
-    particle_filter_signal,
-)
 from backtest import backtest_from_positions, performance_summary, plot_equity_curves
 
+from models_full import (
+    adf_test,
+    historical_volatility,
+    ewma_volatility,
+    fit_garch_11,
+    build_signals_ar_ma_arima,
+    bollinger_signal,
+    volatility_position_sizing,
+    kalman_filter_trend,
+    particle_filter_signal,
+    position_size_risk,
+    lstm_signal,
+)
 
-def save_summary_to_json(summary_dict: dict, csv_path: str) -> None:
+
+def save_summary_to_json(
+    model_summaries: Dict[str, Dict[str, float]],
+    diagnostics: Dict[str, object],
+    csv_path: str,
+) -> str:
     """
-    Save all strategy performance summaries into a single JSON file.
-    File name: results_<symbol>.json where symbol is derived from csv_path.
+    Lưu toàn bộ kết quả ra 1 file JSON:
+      - per model: metrics
+      - diagnostics: ADF, volatility, GARCH, position sizing demo
     """
     base = os.path.basename(csv_path)
     symbol = base.replace(".csv", "")
-
     out_path = f"results_{symbol}.json"
 
-    cleaned = {}
-    for strategy_name, metrics in summary_dict.items():
-        cleaned[strategy_name] = {}
-        for k, v in metrics.items():
-            # Convert numpy types to plain Python floats for JSON
-            if hasattr(v, "item"):
-                cleaned[strategy_name][k] = float(v)
-            else:
-                cleaned[strategy_name][k] = v
+    to_save = {
+        "symbol": symbol,
+        "models": model_summaries,
+        "diagnostics": diagnostics,
+    }
 
     with open(out_path, "w") as f:
-        json.dump(cleaned, f, indent=4)
+        json.dump(to_save, f, indent=2)
 
-    print(f"\nSaved JSON summary to {out_path}")
+    print(f"[JSON] Saved summary to: {out_path}")
+    return out_path
 
 
-def run_all_models(csv_path: str, fee_bps: float = 5.0) -> None:
-    # 1. Load data và tạo feature
+def run_all_models(csv_path: str, fee_bps: float) -> None:
+    print("===========================================")
+    print(f"[INFO] Loading data from: {csv_path}")
+    print("===========================================")
+
     df = load_single_stock_csv(csv_path)
     df = add_volatility_features(df, window=20)
 
+    # ==============================
+    # Diagnostics: ADF, volatility, GARCH
+    # ==============================
+    print("[INFO] Running diagnostics (ADF, volatility, GARCH)")
+
+    adf_result = adf_test(df["log_return"])
+    sigma_daily, sigma_annual = historical_volatility(df["log_return"])
+    ewma_vol = ewma_volatility(df["log_return"], span=20)
+
+    garch_info = {}
+    try:
+        model_garch, res_garch = fit_garch_11(df["log_return"])
+        garch_info["params"] = {k: float(v) for k, v in res_garch.params.items()}
+        garch_info["aic"] = float(res_garch.aic)
+        garch_info["bic"] = float(res_garch.bic)
+    except Exception as e:
+        garch_info["error"] = str(e)
+
+    diagnostics = {
+        "adf": adf_result,
+        "historical_vol": {
+            "sigma_daily": sigma_daily,
+            "sigma_annual": sigma_annual,
+        },
+        "ewma_example": {
+            "last_ewma_vol_daily": float(ewma_vol.iloc[-1]) if not ewma_vol.empty else 0.0,
+        },
+        "garch_11": garch_info,
+    }
+
+    print("[LOG] ADF result:")
+    print(f"  test_stat    : {adf_result['test_stat']:.6f}")
+    print(f"  pvalue       : {adf_result['pvalue']:.6f}")
+    print(f"  is_stationary: {adf_result['is_stationary']}")
+    print()
+
+    print("[LOG] Historical volatility:")
+    print(f"  sigma_daily : {sigma_daily:.6f}")
+    print(f"  sigma_annual: {sigma_annual:.6f}")
+    print()
+
+    # Demo position sizing theo R, M (log ra thôi)
+    try:
+        from models_full import position_size_risk
+        ps_demo = position_size_risk(
+            equity=100_000.0,
+            risk_fraction=0.01,
+            sigma_daily=sigma_daily if sigma_daily > 0 else 0.02,
+            M=2.0,
+            last_price=float(df["Close"].iloc[-1]),
+        )
+        diagnostics["position_sizing_demo"] = ps_demo
+        print("[LOG] Position sizing demo (equity=100k, risk=1 percent, M=2):")
+        print(f"  R_dollar            : {ps_demo['R_dollar']:.2f}")
+        print(f"  dollar_vol_per_share: {ps_demo['dollar_vol_per_share']:.4f}")
+        print(f"  shares              : {ps_demo['shares']:.2f}")
+        print()
+    except Exception as e:
+        print(f"[WARN] Position sizing demo failed: {e}")
+
+    # ==============================
+    # Trading models
+    # ==============================
+
     curves: Dict[str, pd.Series] = {}
+    summaries: Dict[str, Dict[str, float]] = {}
 
-    # 2. Bollinger mean reversion
-    df["position_bb"] = bollinger_mean_reversion_signal(df)
-    res_bb = backtest_from_positions(df, pos_col="position_bb", fee_bps=fee_bps)
-    perf_bb = performance_summary(res_bb)
-    curves["Bollinger"] = res_bb["equity_curve"]
+    # 1. Classical AR, MA, ARIMA on log_return
+    print("===========================================")
+    print("[INFO] Running classical AR MA ARIMA models")
+    print("===========================================")
 
-    # 3. Volatility position sizing trên sign của return
-    sign_return = df["log_return"].apply(
-        lambda x: 1.0 if x > 0 else (-1.0 if x < 0 else 0.0)
-    )
-    df["position_vol"] = volatility_position_sizing(df) * sign_return
-    res_vol = backtest_from_positions(df, pos_col="position_vol", fee_bps=fee_bps)
-    perf_vol = performance_summary(res_vol)
-    curves["Vol sized trend"] = res_vol["equity_curve"]
-
-    # 4. AR, MA, ARIMA
-    perf_arima: Dict[str, dict] = {}
-    signals_arima = build_signals_ar_ma_arima(df)
-    for name, sig in signals_arima.items():
+    arima_signals = build_signals_ar_ma_arima(df)
+    for name, sig in arima_signals.items():
+        model_name = f"TS_{name}"
         df_tmp = df.copy()
         df_tmp["position"] = sig.reindex(df_tmp.index).fillna(0.0)
-        res = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
-        perf_arima[name] = performance_summary(res)
-        curves[f"ARIMA {name}"] = res["equity_curve"]
 
-    # 5. Kalman trend
-    _, sig_kalman = kalman_filter_trend(df["Close"])
+        bt = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
+        perf = performance_summary(bt)
+
+        summaries[model_name] = perf
+        curves[model_name] = bt["equity_curve"]
+
+        print(f"[MODEL] {model_name}")
+        for k, v in perf.items():
+            print(f"  {k}: {v:.6f}")
+        print()
+
+    # 2. Bollinger mean reversion
+    print("===========================================")
+    print("[INFO] Running Bollinger mean reversion model")
+    print("===========================================")
+
+    df["position_bb"] = bollinger_signal(df)
+    bt_bb = backtest_from_positions(df, pos_col="position_bb", fee_bps=fee_bps)
+    perf_bb = performance_summary(bt_bb)
+    summaries["Bollinger"] = perf_bb
+    curves["Bollinger"] = bt_bb["equity_curve"]
+
+    print("[MODEL] Bollinger")
+    for k, v in perf_bb.items():
+        print(f"  {k}: {v:.6f}")
+    print()
+
+    # 3. Volatility sized trend (sign(return) scaled by volatility)
+    print("===========================================")
+    print("[INFO] Running volatility sized trend model")
+    print("===========================================")
+
+    sign_return = df["log_return"].apply(lambda x: 1.0 if x > 0 else (-1.0 if x < 0 else 0.0))
+    vol_pos = volatility_position_sizing(df, target_vol=0.15)
+    df["position_vol_trend"] = vol_pos * sign_return
+
+    bt_vol = backtest_from_positions(df, pos_col="position_vol_trend", fee_bps=fee_bps)
+    perf_vol = performance_summary(bt_vol)
+    summaries["VolatilitySizedTrend"] = perf_vol
+    curves["VolatilitySizedTrend"] = bt_vol["equity_curve"]
+
+    print("[MODEL] VolatilitySizedTrend")
+    for k, v in perf_vol.items():
+        print(f"  {k}: {v:.6f}")
+    print()
+
+    # 4. Kalman filter trend
+    print("===========================================")
+    print("[INFO] Running Kalman filter trend model")
+    print("===========================================")
+
+    state_kf, sig_kf = kalman_filter_trend(df["Close"])
     df_tmp = df.copy()
-    df_tmp["position"] = sig_kalman.reindex(df_tmp.index).fillna(0.0)
-    res_kalman = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
-    perf_kalman = performance_summary(res_kalman)
-    curves["Kalman"] = res_kalman["equity_curve"]
+    df_tmp["position"] = sig_kf.reindex(df_tmp.index).fillna(0.0)
+    bt_kf = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
+    perf_kf = performance_summary(bt_kf)
+    summaries["KalmanTrend"] = perf_kf
+    curves["KalmanTrend"] = bt_kf["equity_curve"]
 
-    # 6. Particle filter
-    sig_particle = particle_filter_signal(df["log_return"])
+    print("[MODEL] KalmanTrend")
+    for k, v in perf_kf.items():
+        print(f"  {k}: {v:.6f}")
+    print()
+
+    # 5. Particle filter on expected return
+    print("===========================================")
+    print("[INFO] Running Particle filter model")
+    print("===========================================")
+
+    sig_pf = particle_filter_signal(df["log_return"])
     df_tmp = df.copy()
-    df_tmp["position"] = sig_particle.reindex(df_tmp.index).fillna(0.0)
-    res_particle = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
-    perf_particle = performance_summary(res_particle)
-    curves["Particle"] = res_particle["equity_curve"]
+    df_tmp["position"] = sig_pf.reindex(df_tmp.index).fillna(0.0)
+    bt_pf = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
+    perf_pf = performance_summary(bt_pf)
+    summaries["ParticleFilter"] = perf_pf
+    curves["ParticleFilter"] = bt_pf["equity_curve"]
 
-    # 7. Build summary cho tất cả chiến lược
-    summary = {}
-    summary["Bollinger"] = perf_bb
-    summary["Volatility Trend"] = perf_vol
-    for name, perf in perf_arima.items():
-        summary[f"ARIMA {name}"] = perf
-    summary["Kalman"] = perf_kalman
-    summary["Particle Filter"] = perf_particle
+    print("[MODEL] ParticleFilter")
+    for k, v in perf_pf.items():
+        print(f"  {k}: {v:.6f}")
+    print()
 
-    # In summary thô ra terminal (cho dễ debug)
-    print("=========================================")
-    for strat_name, metrics in summary.items():
-        print(strat_name, ":", metrics)
+    # 6. LSTM demo (extension)
+    print("===========================================")
+    print("[INFO] Running LSTM demo model (if torch available)")
+    print("===========================================")
 
-    # 8. Lưu JSON
-    save_summary_to_json(summary, csv_path)
+    try:
+        sig_lstm = lstm_signal(df["log_return"], lookback=20, epochs=5)
+        df_tmp = df.copy()
+        df_tmp["position"] = sig_lstm.reindex(df_tmp.index).fillna(0.0)
+        bt_lstm = backtest_from_positions(df_tmp, pos_col="position", fee_bps=fee_bps)
+        perf_lstm = performance_summary(bt_lstm)
+        summaries["LSTM_Demo"] = perf_lstm
+        curves["LSTM_Demo"] = bt_lstm["equity_curve"]
 
-    # 9. Vẽ và lưu equity curves
-    symbol_name = os.path.basename(csv_path).replace(".csv", "")
-    # Lưu ý: hàm plot_equity_curves trong backtest.py đã được sửa để nhận thêm symbol, save_dir, show
+        print("[MODEL] LSTM_Demo")
+        for k, v in perf_lstm.items():
+            print(f"  {k}: {v:.6f}")
+        print()
+    except Exception as e:
+        print(f"[WARN] LSTM demo not run: {e}")
+
+    # ==============================
+    # Save JSON + Plot
+    # ==============================
+    save_summary_to_json(summaries, diagnostics, csv_path)
+
+    symbol = os.path.basename(csv_path).replace(".csv", "")
     plot_equity_curves(
-        curves,
-        title=f"Equity curves for {symbol_name}",
-        symbol=symbol_name,
+        curves=curves,
+        title=f"Equity curves for {symbol}",
+        symbol=symbol,
         save_dir="plots",
         show=True,
     )
 
+    print("===========================================")
+    print("[DONE] All models finished")
+    print("===========================================")
+
 
 def parse_args() -> argparse.Namespace:
-    p = argparse.ArgumentParser(
+    parser = argparse.ArgumentParser(
         description="Run time series trading models on a single stock CSV"
     )
-    p.add_argument(
+    parser.add_argument(
         "--csv_path",
         type=str,
         required=True,
-        help=(
-            "Path to CSV file containing columns "
-            "Date, Close, High, Low, Open, Volume, Symbol, Security Name"
-        ),
+        help="Path to CSV with columns Date, Open, High, Low, Close, Volume, Symbol, Security Name",
     )
-    p.add_argument(
+    parser.add_argument(
         "--fee_bps",
         type=float,
         default=5.0,
-        help="Transaction cost in basis points for each position change",
+        help="Transaction cost per position change in basis points",
     )
-    return p.parse_args()
+    return parser.parse_args()
 
 
 if __name__ == "__main__":

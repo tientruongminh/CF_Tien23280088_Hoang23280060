@@ -1,3 +1,5 @@
+# backtest.py
+
 from typing import Dict
 import os
 
@@ -13,10 +15,12 @@ def backtest_from_positions(
     fee_bps: float = 0.0,
 ) -> pd.DataFrame:
     """
-    Backtest chiến lược dựa trên position và log_return.
+    Backtest chiến lược dựa trên:
+      - ret_col: log return
+      - pos_col: position_t (long/short/flat)
 
-    fee_bps: phí cho mỗi lần thay đổi position (basis points)
-    ví dụ 5 bps tương đương 0.0005.
+    fee_bps: phí mỗi lần thay đổi position, tính theo basis points.
+             5 bps = 0.0005.
     """
     df = df.copy()
 
@@ -36,9 +40,8 @@ def backtest_from_positions(
 
 def performance_summary(df: pd.DataFrame, ret_col: str = "strategy_ret_net") -> Dict[str, float]:
     """
-    Một số thống kê cơ bản hàng năm.
+    Thống kê cơ bản hàng năm cho cột ret_col.
     """
-    out: Dict[str, float] = {}
     r = df[ret_col].dropna()
     if r.empty:
         return {
@@ -50,57 +53,51 @@ def performance_summary(df: pd.DataFrame, ret_col: str = "strategy_ret_net") -> 
             "sharpe": 0.0,
         }
 
-    out["n_periods"] = len(r)
-    out["mean_daily"] = r.mean()
-    out["vol_daily"] = r.std()
+    mean_daily = r.mean()
+    vol_daily = r.std()
+    ann_return = mean_daily * 252.0
+    ann_vol = vol_daily * np.sqrt(252.0)
+    sharpe = ann_return / ann_vol if ann_vol > 0 else 0.0
 
-    out["ann_return"] = r.mean() * 252.0
-    out["ann_vol"] = r.std() * np.sqrt(252.0)
-    out["sharpe"] = out["ann_return"] / out["ann_vol"] if out["ann_vol"] > 0 else 0.0
-    return out
+    return {
+        "n_periods": int(len(r)),
+        "mean_daily": float(mean_daily),
+        "vol_daily": float(vol_daily),
+        "ann_return": float(ann_return),
+        "ann_vol": float(ann_vol),
+        "sharpe": float(sharpe),
+    }
 
 
 def plot_equity_curves(
     curves: Dict[str, pd.Series],
-    title: str = "Equity curves",
-    symbol: str = "output",
+    title: str,
+    symbol: str,
     save_dir: str = "plots",
-    show: bool = True
+    show: bool = True,
 ) -> str:
     """
-    Vẽ và lưu nhiều equity curve trên cùng một biểu đồ.
-    
-    save_dir: thư mục lưu hình
-    symbol: tên file (không cần đuôi .png)
-    show: True → plt.show(), False → không hiện (dùng khi chạy server)
-    
-    Trả về: đường dẫn file .png đã lưu
+    Vẽ nhiều equity curve trên cùng một hình và lưu ra file.
+
+    curves: dict {model_name: equity_series}
+    symbol: dùng đặt tên file, ví dụ ATLO
     """
-
-    # Tạo thư mục nếu chưa tồn tại
     os.makedirs(save_dir, exist_ok=True)
-
-    # Tạo đường dẫn file
     filepath = os.path.join(save_dir, f"equity_curves_{symbol}.png")
 
-    # Vẽ biểu đồ
     plt.figure(figsize=(12, 4))
     for name, series in curves.items():
         series.plot(label=name)
-
     plt.legend()
     plt.grid(True)
     plt.title(title)
     plt.tight_layout()
-
-    # Lưu file
     plt.savefig(filepath, dpi=300)
 
-    # Chỉ show nếu muốn
     if show:
         plt.show()
     else:
         plt.close()
 
-    print(f"Saved plot: {filepath}")
+    print(f"[PLOT] Saved equity curves to: {filepath}")
     return filepath
