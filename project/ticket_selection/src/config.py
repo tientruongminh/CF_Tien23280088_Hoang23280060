@@ -13,7 +13,7 @@ DATA_DIR = "/kaggle/input/computational-finance/yfinance/yfinance/per_symbol"
 SPY_PATH = "/kaggle/input/computational-finance/SPY.csv"
 
 # File sector industry (nếu đã tạo trước)
-SECTOR_FILE = "sector_industry.csv"
+SECTOR_FILE = "/kaggle/input/computational-finance/sector_industry.csv"
 
 # Folder output cuối cùng
 OUTPUT_DIR = "clusters"
