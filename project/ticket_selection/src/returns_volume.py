@@ -5,8 +5,8 @@ from functools import reduce
 import numpy as np
 import pandas as pd
 
-from .config import RET_LOOKBACK_YEARS
-from .data_loader import load_ohlcv
+from config import RET_LOOKBACK_YEARS
+from data_loader import load_ohlcv
 
 """
 Xây return matrix, tính average dollar volume.

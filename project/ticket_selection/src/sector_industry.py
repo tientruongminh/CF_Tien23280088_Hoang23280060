@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 
-from .config import SECTOR_FILE
+from config import SECTOR_FILE
 
 """
 Lấy bảng sectorKey, industryKey cho toàn bộ tickers.

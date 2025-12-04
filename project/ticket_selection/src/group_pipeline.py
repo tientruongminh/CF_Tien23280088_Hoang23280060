@@ -2,7 +2,7 @@
 
 import pandas as pd
 
-from .config import (
+from config import (
     VOL_DECILES_KEEP,
     BETA_TOL,
     RET_LOOKBACK_YEARS,
@@ -13,12 +13,12 @@ from .config import (
     COINT_MIN_OBS,
     COINT_ALPHA,
 )
-from .returns_volume import (
+from returns_volume import (
     build_price_dict,
     build_common_return_matrix,
     compute_avg_dollar_volume,
 )
-from .cointegration import find_cointegrated_pairs, build_cluster_dataset
+from cointegration import find_cointegrated_pairs, build_cluster_dataset
 
 """
 Pipeline xử lý một group (sectorKey, industryKey).

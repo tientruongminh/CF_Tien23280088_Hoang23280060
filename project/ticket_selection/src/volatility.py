@@ -3,8 +3,8 @@
 import numpy as np
 import pandas as pd
 
-from .config import VOL_MIN_OBS, VOL_LOOKBACK_DAYS
-from .data_loader import load_ohlcv
+from config import VOL_MIN_OBS, VOL_LOOKBACK_DAYS
+from data_loader import load_ohlcv
 
 """
 Tính volatility 1 năm và decile cho toàn universe.

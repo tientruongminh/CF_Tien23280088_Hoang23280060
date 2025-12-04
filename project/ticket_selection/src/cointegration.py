@@ -6,8 +6,8 @@ import numpy as np
 import pandas as pd
 from statsmodels.tsa.stattools import coint
 
-from .config import COINT_LOOKBACK_YEARS, COINT_MIN_OBS, COINT_ALPHA
-from .data_loader import load_ohlcv
+from config import COINT_LOOKBACK_YEARS, COINT_MIN_OBS, COINT_ALPHA
+from data_loader import load_ohlcv
 
 """
 Test cointegration cho một cụm mã.

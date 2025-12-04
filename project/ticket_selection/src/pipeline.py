@@ -2,18 +2,18 @@
 
 import os
 
-from .config import (
+from config import (
     DATA_DIR,
     SPY_PATH,
     SECTOR_FILE,
     OUTPUT_DIR,
     MIN_GROUP_SIZE,
 )
-from .data_loader import list_tickers, compute_spy_returns
-from .sector_industry import get_sector_industry
-from .volatility import compute_all_vols
-from .beta import compute_all_betas
-from .group_pipeline import process_group
+from data_loader import list_tickers, compute_spy_returns
+from sector_industry import get_sector_industry
+from volatility import compute_all_vols
+from beta import compute_all_betas
+from group_pipeline import process_group
 
 """
 Full pair trading cluster pipeline trên toàn universe:

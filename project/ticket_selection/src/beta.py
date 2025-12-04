@@ -3,9 +3,8 @@
 import numpy as np
 import pandas as pd
 
-from .config import BETA_MIN_OBS
-from .data_loader import load_ohlcv
-from .data_loader import compute_spy_returns
+from config import BETA_MIN_OBS
+from data_loader import load_ohlcv
 
 """
 Tính beta với SPY cho toàn universe.

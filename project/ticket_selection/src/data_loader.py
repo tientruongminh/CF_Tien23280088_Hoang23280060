@@ -4,7 +4,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from .config import DATA_DIR, SPY_PATH, VOL_LOOKBACK_DAYS
+from config import DATA_DIR, SPY_PATH, VOL_LOOKBACK_DAYS
 
 """
 Các hàm đọc dữ liệu cơ bản:
