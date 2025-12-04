@@ -333,7 +333,7 @@ $$
 * Giữ những mã thỏa:
 
 $$
-\left|\beta_i - \beta_{\text{center}}\right| \le \text{BETA\_TOL}
+\left|\beta_i - \beta_{\text{center}}\right| \le \mathrm{BETA\_TOL}
 $$
 
 
