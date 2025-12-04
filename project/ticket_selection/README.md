@@ -265,9 +265,9 @@ Beta phản ánh mức độ nhạy của một cổ phiếu trước biến đ�
 
 Công thức cơ bản:
 
-[
+$$
 \beta_i = \frac{\text{Cov}(r_i, r_m)}{\text{Var}(r_m)}
-]
+$$
 
 Trong đó:
 
@@ -293,9 +293,9 @@ Nhóm sử dụng **SPY** để đại diện cho thị trường:
 * Lấy khoảng thời gian tương thích với giai đoạn volatility (khoảng 1 năm gần nhất hoặc dài hơn).
 * Tính log return ngày:
 
-[
+$$
 r_m(t) = \log(\text{Close}*{m,t}) - \log(\text{Close}*{m, t-1})
-]
+$$
 
 * Lưu vào bảng `spy_ret` với cột:
 
