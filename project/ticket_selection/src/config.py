@@ -20,7 +20,7 @@ OUTPUT_DIR = "clusters"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Ngưỡng và tham số
-MIN_GROUP_SIZE = 25          # số mã tối thiểu cho một cặp sector industry
+MIN_GROUP_SIZE = 10          # số mã tối thiểu cho một cặp sector industry
 VOL_MIN_OBS = 200             # số quan sát tối thiểu để tính vol 1y
 VOL_LOOKBACK_DAYS = 252       # số ngày gần nhất để tính vol 1y
 VOL_DECILES_KEEP = [4, 5, 6]  # dải volatility giữ lại
