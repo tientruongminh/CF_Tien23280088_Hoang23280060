@@ -1,0 +1,9 @@
+#!/bin/bash
+
+FILE="${1}"
+
+python week123/src/run_strategy.py \
+  --csv_path "week123/data/yfinance/per_symbol/${FILE}.csv" \
+  --window 20 \
+  --num_std 2 \
+  --initial_capital 10000

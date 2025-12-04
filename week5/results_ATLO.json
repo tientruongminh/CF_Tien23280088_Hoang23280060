@@ -1,0 +1,99 @@
+{
+  "symbol": "ATLO",
+  "models": {
+    "TS_ar1": {
+      "n_periods": 2513,
+      "mean_daily": 0.0,
+      "vol_daily": 0.0,
+      "ann_return": 0.0,
+      "ann_vol": 0.0,
+      "sharpe": 0.0
+    },
+    "TS_ma1": {
+      "n_periods": 2513,
+      "mean_daily": 0.0,
+      "vol_daily": 0.0,
+      "ann_return": 0.0,
+      "ann_vol": 0.0,
+      "sharpe": 0.0
+    },
+    "TS_arima_1_1_1": {
+      "n_periods": 2513,
+      "mean_daily": 0.0,
+      "vol_daily": 0.0,
+      "ann_return": 0.0,
+      "ann_vol": 0.0,
+      "sharpe": 0.0
+    },
+    "Bollinger": {
+      "n_periods": 2513,
+      "mean_daily": -0.0003630320132681271,
+      "vol_daily": 0.018969866492024968,
+      "ann_return": -0.09148406734356804,
+      "ann_vol": 0.3011372948519718,
+      "sharpe": -0.3037952087221156
+    },
+    "VolatilitySizedTrend": {
+      "n_periods": 2513,
+      "mean_daily": -0.001221882671130574,
+      "vol_daily": 0.010093188726766327,
+      "ann_return": -0.30791443312490463,
+      "ann_vol": 0.16022440383998615,
+      "sharpe": -1.9217698786535315
+    },
+    "KalmanTrend": {
+      "n_periods": 2513,
+      "mean_daily": -0.001479960874452656,
+      "vol_daily": 0.019092333306602188,
+      "ann_return": -0.3729501403620693,
+      "ann_vol": 0.3030813952633493,
+      "sharpe": -1.2305279907993383
+    },
+    "ParticleFilter": {
+      "n_periods": 2513,
+      "mean_daily": -0.0020532165555500153,
+      "vol_daily": 0.01907916987023902,
+      "ann_return": -0.5174105719986039,
+      "ann_vol": 0.3028724321892535,
+      "sharpe": -1.7083448904827812
+    },
+    "LSTM_Demo": {
+      "n_periods": 2513,
+      "mean_daily": -0.00010049840192969879,
+      "vol_daily": 0.01901705000721664,
+      "ann_return": -0.025325597286284095,
+      "ann_vol": 0.3018863099350459,
+      "sharpe": -0.08389117509745034
+    }
+  },
+  "diagnostics": {
+    "adf": {
+      "test_stat": -28.30683939628809,
+      "pvalue": 0.0,
+      "n_lags": 3,
+      "n_obs": 2509,
+      "critical_values": {
+        "1%": -3.432959008741782,
+        "5%": -2.862692648021296,
+        "10%": -2.567383598871881
+      },
+      "alpha": 0.05,
+      "is_stationary": true
+    },
+    "historical_vol": {
+      "sigma_daily": 0.01908761833647916,
+      "sigma_annual": 0.30300654743304156
+    },
+    "ewma_example": {
+      "last_ewma_vol_daily": 0.015270812177833722
+    },
+    "garch_11": {
+      "error": "pip install arch"
+    },
+    "position_sizing_demo": {
+      "R_dollar": 1000.0,
+      "dollar_vol_per_share": 0.8043522250490742,
+      "shares": 1243.2364440080826
+    }
+  }
+}
