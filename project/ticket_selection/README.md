@@ -60,7 +60,7 @@ Idio vol tương tự ⇒ độ “noise” riêng từng mã tương đương.
 
 Từ data price–volume:
 
-- Average dollar volume: $avg_dollar_vol = mean(close * volume)$ trong 6–12 tháng gần nhất.
+- Average dollar volume: $avg\_dollar\_vol = mean(close * volume)$ trong 6–12 tháng gần nhất.
 
 - Turnover ratio proxy: Không có số lượng cổ phiếu lưu hành thì khó chính xác, nhưng bạn có thể lấy turnover tương đối bằng cách chuẩn hóa volume/volatility hay volume/price.
 
@@ -126,71 +126,360 @@ Một cụm là một tập từ 2 cổ phiếu ${s_1, s_2, ..., s_{n}}$
 - **Có background correlation cao**  
 - **Thanh khoản hợp lý**
 
+Mình viết lại toàn bộ **phần 4** cho “đầy” và song song rõ ràng với phần 3 nhé. Bạn có thể copy nguyên block này dán vào report.
+
+---
+
 ## 4. Quá trình thực hiện
+
+Phần này mô tả chi tiết cách triển khai toàn bộ pipeline tương ứng với các điều kiện trong Mục 3:
+
+* Điều kiện về ngành
+* Điều kiện về đặc tính thống kê
+* Điều kiện về cointegration
+
+Toàn bộ pipeline được xây dựng trên dữ liệu price volume 10 năm lấy từ bộ dữ liệu yfinance trên Kaggle, kết hợp với thông tin sector/industry lấy từ Yahoo.
+
+---
 
 ### 4.1. Lấy thông tin sector/industry của cổ phiếu
 
-Sử dụng thư viện `yahooquery` để lấy thông tin của mã.
-Notebook: notebooks/retrieve_sector_industry.ipynb
+**Mục tiêu:** gán cho mỗi mã cổ phiếu một cặp nhãn `(sectorKey, industryKey)` để có thể lọc theo điều kiện ngành trong Mục 3.
 
-Output: sector_industry.csv
+**Cách làm:**
 
-Visualization: 
+* Lấy danh sách toàn bộ ticker từ thư mục `per_symbol` trên Kaggle:
+  `yfinance/per_symbol/*.csv`.
+* Sử dụng thư viện `yahooquery` với endpoint `asset_profile` để lấy thông tin:
 
-![Ticket_Per_Sector](visualization/ticket_per_sector.png)
+  * `sectorKey`
+  * `industryKey`
 
-![Top_20_Industries](visualization/top_20_industries.png)
+**Notebook:**
+`notebooks/retrieve_sector_industry.ipynb`
 
+**Output:**
+Bảng ánh xạ
+`dataset/sector_industry.csv` với cấu trúc:
 
-Nhận xét:
-- Sector phân bố khá rộng: healthcare ~ 370, financial-services ~ 317, technology ~ 287, industrials ~ 174, consumer-cyclical ~ 149
+* `ticker`
+* `sectorKey`
+* `industryKey`
 
-- Industry cũng phân bố tương ứng khá chi tiết: biotechnology ~ 214, banks-regional ~ 197, software-application, asset-management, semiconductors, medical-devices…
+**Visualization:**
 
-Ở đây, nhóm quyết định tập trung vào nhóm sector $healthcare$ và industry $biotechnology$. Output file chi tiết filter ra nằm ở dataset/biotech_healthcare_tickers.csv
+* Phân bố số lượng mã theo sector:
+
+  ![Ticket\_Per\_Sector](visualization/ticket_per_sector.png)
+
+* Top 20 industry theo số lượng mã:
+
+  ![Top\_20\_Industries](visualization/top_20_industries.png)
+
+**Nhận xét:**
+
+* Sector phân bố khá rộng:
+
+  * healthcare: ~ 370
+  * financial-services: ~ 317
+  * technology: ~ 287
+  * industrials: ~ 174
+  * consumer-cyclical: ~ 149
+* Industry cũng được phân mảnh chi tiết:
+
+  * biotechnology: ~ 214
+  * banks-regional: ~ 197
+  * software-application, asset-management, semiconductors, medical-devices, v.v.
+
+Để minh họa pipeline, nhóm quyết định tập trung vào tập:
+
+* `sectorKey = healthcare`
+* `industryKey = biotechnology`
+
+Chi tiết ticker được lưu tại:
+`dataset/biotech_healthcare_tickers.csv`.
+
+---
 
 ### 4.2. Volatility Calculation
 
-#### 4.2.1. Định nghĩa Volatility
+Phần này tương ứng điều kiện:
 
-- Dùng log return ngày trên Close (Close ~ Adj Close)
-- Lấy 252 phiên gần nhất (xấp xỉ 1 năm giao dịch)
-- Volatility 1 năm:
-$
+> Volatility nằm trong cùng một dải (ví dụ cùng một decile trong toàn universe).
+
+#### 4.2.1. Định nghĩa volatility
+
+* Sử dụng **log return ngày** trên giá đóng cửa `Close` (xem như tương đương `Adj Close` trong dataset).
+* Xét **252 phiên gần nhất** cho mỗi mã (xấp xỉ 1 năm giao dịch).
+* Volatility 1 năm được định nghĩa:
+
+$$
 \sigma_{\text{1y}} = \text{std}(\text{daily log return}) \times \sqrt{252}
-$
+$$
 
-#### 4.2.2 Code thực hiện && Kết quả
+Trong đó:
 
-Notebook: notebooks/calculate_volatility.ipynb
+* `daily log return = log(Close_t) - log(Close_{t-1})`
+* `std` là độ lệch chuẩn mẫu của chuỗi log return trong 252 phiên.
 
-Output: dataset/biotech_mid_vol.csv
+#### 4.2.2. Quy trình tính volatility cho toàn universe
 
-### 4.3. Beta vs Spy
+1. Duyệt qua toàn bộ ticker có file giá trong thư mục `yfinance/per_symbol`.
+2. Với từng ticker:
 
-#### 4.3.1 Beta
-Beta phản ánh mức độ nhạy của một cổ phiếu trước "thị trường chung".
+   * Đọc dữ liệu, xử lý các header noise (các dòng đầu chứa tên ticker, non numeric).
+   * Chuẩn hóa cột `Date` về kiểu `datetime`, sort theo thời gian.
+   * Lấy 252 quan sát gần nhất, tính log return ngày.
+   * Nếu số lượng quan sát hợp lệ < ngưỡng `min_obs` (ví dụ 200) thì bỏ qua mã.
+   * Tính `σ_1y` theo công thức trên.
+3. Lưu kết quả thành bảng:
 
-Công thức tính cơ bản:
+   * `ticker`
+   * `vol_1y`
+   * `vol_decile`
+
+   Trong đó `vol_decile` được gán bằng `pd.qcut(vol_1y, 10)` trên toàn universe, nghĩa là chia toàn bộ cổ phiếu thành 10 dải volatility từ thấp đến cao.
+
+#### 4.2.3. Lọc theo volatility decile
+
+* Đầu tiên, áp dụng trên **toàn bộ universe** để mỗi mã được gán một decile volatility.
+* Sau đó, khi filter một sector/industry cụ thể (ví dụ biotech):
+
+  * Merge `biotech_healthcare_tickers.csv` với bảng volatility.
+  * Lọc những mã nằm trong các decile được chọn, ví dụ:
+
+    * `vol_decile ∈ {4, 5, 6}` để chọn nhóm volatility trung bình.
+  * Kết quả là tập `biotech_mid_vol` dùng cho bước beta.
+
+---
+
+### 4.3. Beta vs SPY
+
+Phần này tương ứng điều kiện:
+
+> Beta với SPY không chênh lệch quá một ngưỡng (ví dụ: `|βᵢ − βⱼ| < 0.2`).
+
+#### 4.3.1. Định nghĩa beta
+
+Beta phản ánh mức độ nhạy của một cổ phiếu trước biến động của "thị trường chung".
+
+Công thức cơ bản:
+
+[
+\beta_i = \frac{\text{Cov}(r_i, r_m)}{\text{Var}(r_m)}
+]
+
+Trong đó:
+
+* (r_i): return ngày của cổ phiếu i
+* (r_m): return ngày của chỉ số thị trường (market factor)
+
+Ý nghĩa:
+
+* Beta đo mức độ và chiều phản ứng của cổ phiếu so với thị trường.
+* Ví dụ:
+
+  * Nếu thị trường tăng 1% và cổ phiếu thường tăng khoảng 1.5% thì beta > 1.
+  * Nếu cổ phiếu ít biến động hơn thị trường thì beta < 1.
+
+Nhóm sử dụng **SPY** để đại diện cho thị trường:
+
+* SPY = SPDR S&P 500 ETF Trust
+* ETF mô phỏng chỉ số S&P 500, đại diện cho 500 công ty lớn nhất nước Mĩ theo vốn hóa.
+
+#### 4.3.2. Tính return của SPY
+
+* Dùng file `SPY.csv` riêng, cũng được làm sạch header noise tương tự các mã khác.
+* Lấy khoảng thời gian tương thích với giai đoạn volatility (khoảng 1 năm gần nhất hoặc dài hơn).
+* Tính log return ngày:
+
+[
+r_m(t) = \log(\text{Close}*{m,t}) - \log(\text{Close}*{m, t-1})
+]
+
+* Lưu vào bảng `spy_ret` với cột:
+
+  * `Date`
+  * `r_m`
+
+#### 4.3.3. Tính beta cho từng mã
+
+Với mỗi cổ phiếu i:
+
+1. Load chuỗi giá sạch, align với khoảng thời gian của `spy_ret` theo `Date`.
+2. Tính log return ngày `r_i`.
+3. Merge với `spy_ret` theo ngày, giữ những phiên chung, bỏ NaN.
+4. Nếu số quan sát < `BETA_MIN_OBS` (ví dụ 200) thì bỏ mã.
+5. Tính:
+
 $$
 \beta_i = \frac{\text{Cov}(r_i, r_m)}{\text{Var}(r_m)}
 $$
 
-Trong đó:
-- $r_i$ = return của cổ phiếu i
-- $r_m$ = return của **thị trường (market factor)**
+* Kết quả lưu vào bảng:
 
-Vì beta đo “mức độ biến động tương quan với thị trường”, nên ta cần phải có dữ liệu thị trường để đo:
-- Cổ phiếu biotech A tăng 1%, thị trường tăng 0.5% → beta cao
-- Cổ phiếu biotech B tăng 1%, thị trường giảm → beta khác
+  * `ticker`
+  * `beta_spy`
 
-Nhóm quyết định sử dụng cổ phiếu SPY để đại diện cho thị trường.
+#### 4.3.4. Lọc theo beta band
 
-#### 4.3.2. SPY
+* Trên tập đã lọc theo volatility (ví dụ `biotech_mid_vol`), merge thêm `beta_spy`.
+* Tính median beta của nhóm:
 
-SPY = SPDR S&P 500 ETF Trust
+$$
+\beta_{\text{center}} = \text{median}(\beta_i)
+$$
 
-→ Một quỹ ETF mô phỏng chỉ số S&P 500 (500 công ty lớn nhất nước Mỹ theo vốn hóa).
+* Giữ những mã thỏa:
 
+$$
+|\beta_i - \beta_{\text{center}}| \le \text{BETA\_TOL}
+$$
 
+Ví dụ với `BETA_TOL = 0.2`.
 
+* Kết quả là tập `biotech_vol_beta_filtered` dùng cho bước tiếp theo (correlation, dollar volume, cointegration).
+
+---
+
+### 4.4. Pairwise correlation và average dollar volume
+
+Phần này tương ứng hai điều kiện:
+
+* Bình quân pairwise correlation của daily returns (2 đến 3 năm gần nhất) trong cụm > 0.5.
+* Average dollar volume của các mã không chênh nhau quá lớn (tỷ lệ `max/min < 5`).
+
+#### 4.4.1. Xây dựng ma trận return chung
+
+Trên tập mã đã qua bước volatility và beta (ví dụ `biotech_vol_beta_filtered`):
+
+1. Load dữ liệu OHLCV sạch cho tất cả ticker trong nhóm.
+2. Tìm khoảng thời gian giao nhau lớn nhất giữa các mã:
+
+   * Lấy `latest_start` là ngày bắt đầu muộn nhất.
+   * Lấy `earliest_end` là ngày kết thúc sớm nhất.
+   * Giới hạn thêm trong 2 đến 3 năm gần nhất bằng:
+
+     * `range_start = max(latest_start, earliest_end - 3 năm)`
+     * `range_end = earliest_end`.
+3. Với mỗi mã:
+
+   * Lọc dữ liệu trong `[range_start, range_end]`.
+   * Tính log return ngày `r_i`.
+   * Drop NaN, chuẩn hóa thành bảng `(Date, ticker_i_return)`.
+4. Merge tất cả các series return theo `Date` để tạo ma trận:
+
+$$
+\text{df\_returns} \in \mathbb{R}^{T \times (1 + N)}
+$$
+
+* Cột đầu là `Date`, các cột còn lại là return theo từng ticker.
+
+#### 4.4.2. Tính average pairwise correlation
+
+* Bỏ cột `Date`, lấy ma trận return `ret_mat` kích thước `T x N`.
+* Dùng `ret_mat.corr()` để lấy ma trận tương quan `N x N`.
+* Average pairwise correlation được tính:
+
+  * Bỏ đường chéo (corr với chính nó).
+  * Lấy trung bình các phần tử còn lại.
+
+Nếu:
+
+$$
+\text{avg pairwise corr} > 0.5
+$$
+
+thì nhóm mã được xem là có nền tảng biến động chung đủ mạnh, phù hợp với yêu cầu của cụm trong Mục 3.
+
+#### 4.4.3. Tính average dollar volume và kiểm tra size
+
+Để đảm bảo thanh khoản tương đồng:
+
+1. Trên cùng khoảng thời gian `[range_start, range_end]`, với mỗi ticker:
+
+   * Tính `dollar_vol_t = Close_t × Volume_t`.
+   * Lấy trung bình theo thời gian:
+     $\overline{DV}_i = \text{mean}(dollar_vol_t)$.
+
+2. Xây bảng:
+
+   * `ticker`
+   * `avg_dollar_vol`
+
+3. Tính:
+
+$$
+\text{ratio} = \frac{\max_i \overline{DV}_i}{\min_i \overline{DV}_i}
+$$
+
+* Nếu `ratio < 5`: nhóm này thỏa điều kiện về thanh khoản (không có mã quá nhỏ hoặc quá lớn một cách cực đoan trong cụm).
+* Nếu `ratio` quá lớn:
+
+  * Áp dụng một band quanh median:
+
+$$
+\text{lower} = 0.5 \times \text{median}(\overline{DV}_i), \quad
+\text{upper} = 2.0 \times \text{median}(\overline{DV}_i)
+$$
+
+* Lọc giữ những mã có `avg_dollar_vol` nằm trong `[lower, upper]`.
+* Trên tập này, lại tính ma trận correlation và chọn ra tối đa `K` mã có mean correlation cao nhất để tạo cụm.
+
+---
+
+### 4.5. Kiểm tra cointegration trong cụm
+
+Phần này tương ứng điều kiện:
+
+> Trong cụm tồn tại ít nhất vài cặp `(i, j)` có p-value cointegration test < 0.05.
+
+Nhóm sử dụng kiểm định Engle Granger (EG test) để đánh giá cointegration giữa các cặp cổ phiếu trên log price.
+
+#### 4.5.1. Chuẩn bị dữ liệu cho cointegration
+
+Trên cụm nhỏ đã được chọn sau bước correlation và dollar volume (ví dụ 7 mã):
+
+1. Build dataset dạng long:
+
+   * `Date`
+   * `ticker`
+   * `Close`
+   * `Volume`
+   * (có thể giữ thêm `Open`, `High`, `Low`)
+
+2. Giới hạn dữ liệu trong khoảng `COINT_LOOKBACK_YEARS` (ví dụ 3 năm gần nhất).
+
+#### 4.5.2. Engle Granger cointegration test
+
+Với mỗi cặp `(i, j)` trong cụm:
+
+1. Lấy log price:
+
+$$
+y_i(t) = \log(\text{Close}_i(t)), \quad
+y_j(t) = \log(\text{Close}_j(t))
+$$
+
+2. Thực hiện Engle Granger test (ví dụ bằng `statsmodels.tsa.stattools.coint`):
+
+   * Hồi quy tuyến tính một chuỗi theo chuỗi còn lại.
+   * Kiểm định tính dừng của residual.
+
+3. Thu về p-value cho giả thuyết:
+
+   * H0: không cointegrated.
+   * H1: có cointegration.
+
+4. Nếu `p-value < 0.05`, cặp `(i, j)` được coi là **cointegrated**.
+
+#### 4.5.3. Lựa chọn mã cuối cùng trong cụm
+
+* Thu tất cả cặp có `p-value < 0.05`.
+* Tập mã cuối cùng trong cụm được định nghĩa là:
+
+$$
+S_{\text{final}} = {, s \mid s \text{ xuất hiện trong ít nhất một cặp cointegrated },}
+$$
+
+* Trên tập `S_final`, ta giữ lại toàn bộ chuỗi OHLCV và xuất ra file `.csv` cuối cùng cho cụm, dùng làm input cho xây dựng chiến lược pair trading (spread, backtest, chiến lược vào lệnh).
