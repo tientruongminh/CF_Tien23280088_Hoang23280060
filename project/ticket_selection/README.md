@@ -371,7 +371,7 @@ Trên tập mã đã qua bước volatility và beta (ví dụ `biotech_vol_beta
 4. Merge tất cả các series return theo `Date` để tạo ma trận:
 
 $$
-\text{df\_returns} \in \mathbb{R}^{T \times (1 + N)}
+\mathrm{df\_returns} \in \mathbb{R}^{T \times (1 + N)}
 $$
 
 * Cột đầu là `Date`, các cột còn lại là return theo từng ticker.
