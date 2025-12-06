@@ -26,6 +26,7 @@ from metrics_config import (
 # Cấu hình trang
 st.set_page_config(
     page_title="Phân Tích Danh Mục Multi-Alpha",
+    page_icon=" ",  # Blank to remove default icon
     layout="wide",
     initial_sidebar_state="expanded"
 )
