@@ -6,8 +6,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 
 # Paths relative to project structure
-INPUT_DIR = str(BASE_DIR.parent / "ticket_selection" / "clusters")
-OUTPUT_DIR = str(BASE_DIR / "MultiAlpha_Results")
+INPUT_DIR = str(BASE_DIR.parent.parent / "ticket_selection" / "clusters")
+OUTPUT_DIR = str(BASE_DIR.parent.parent / "apply_strategy" / "MultiAlpha_Results")
 
 # --- THAM SỐ ALPHA ---
 WINDOW_COINT = 756
