@@ -500,20 +500,376 @@ def main():
     
     # TAB 2: PORTFOLIO PERFORMANCE
     with tabs[1]:
-        st.markdown('<h2>Portfolio Performance</h2>', unsafe_allow_html=True)
+        st.markdown('<h2>Portfolio Performance Analysis</h2>', unsafe_allow_html=True)
         
-        # Equity curve
+        # Get cluster data
         cluster = list(data['equity'].keys())[0]
         equity_df = data['equity'][cluster]
+        summary = data['summary'].iloc[0]
+        
+        # === SECTION 1: KEY METRICS OVERVIEW ===
+        st.markdown("### Key Performance Metrics")
+        
+        col1, col2, col3, col4 = st.columns(4)
+        
+        sharpe = summary['Sharpe_Ratio']
+        total_ret = summary['Total_Return'] * 100
+        max_dd = summary['Max_Drawdown'] * 100
+        win_rate = summary['Win_Rate'] * 100
+        
+        with col1:
+            st.metric("Sharpe Ratio", f"{sharpe:.2f}")
+            if sharpe > 1.5:
+                st.success("🌟 Excellent - Institutional grade")
+            elif sharpe > 1.0:
+                st.success("✅ Good - Above average")
+            elif sharpe > 0.5:
+                st.info("⚠️ Acceptable - Below target")
+            else:
+                st.error("❌ Poor - Needs improvement")
+        
+        with col2:
+            st.metric("Total Return", f"{total_ret:.1f}%")
+            if total_ret > 1000:
+                st.success("🚀 Outstanding performance")
+            elif total_ret > 300:
+                st.success("✅ Strong returns")
+            else:
+                st.info("📊 Moderate gains")
+        
+        with col3:
+            st.metric("Max Drawdown", f"{max_dd:.1f}%")
+            if abs(max_dd) < 30:
+                st.success("✅ Well controlled")
+            elif abs(max_dd) < 50:
+                st.warning("⚠️ Moderate risk")
+            else:
+                st.error("📉 High risk - Review strategy")
+        
+        with col4:
+            st.metric("Win Rate", f"{win_rate:.1f}%")
+            if win_rate > 55:
+                st.success("🎯 Consistently profitable")
+            elif win_rate > 50:
+                st.info("✅ Slight edge")
+            else:
+                st.warning("⚠️ Need higher accuracy")
+        
+        st.markdown("---")
+        
+        # === SECTION 2: DETAILED INSIGHTS ===
+        st.markdown("### 📊 Performance Insights & Interpretation")
+        
+        # Risk-Adjusted Performance
+        with st.expander("🎯 Risk-Adjusted Performance Analysis", expanded=True):
+            st.markdown(f"""
+            **Sharpe Ratio: {sharpe:.2f}**
+            
+            **What it means:**
+            - Measures return per unit of risk taken
+            - Sharpe > 1.0 is considered good for quant strategies
+            - Your Sharpe of {sharpe:.2f} is {'**excellent**' if sharpe > 1.5 else '**good**' if sharpe > 1.0 else 'acceptable'}
+            
+            **Interpretation:**
+            """)
+            
+            if sharpe > 1.5:
+                st.success("""
+                ✅ **Institutional-grade performance**  
+                - Your strategy delivers exceptional risk-adjusted returns
+                - Comparable to top hedge funds (target: Sharpe > 1.5)
+                - Strong candidate for live deployment
+                - Expected to outperform 90%+ of market participants
+                """)
+            elif sharpe > 1.0:
+                st.info("""
+                ✅ **Above-average performance**  
+                - Strategy shows solid risk management
+                - Beats typical buy-and-hold (Sharpe ~0.5)
+                - Room for improvement through DD reduction
+                - Consider implementing volatility targeting
+                """)
+            else:
+                st.warning("""
+                ⚠️ **Needs optimization**  
+                - Returns don't justify the risk taken
+                - Review signal quality and combination
+                - Implement stricter risk management
+                - Consider portfolio diversification
+                """)
+            
+            # Sortino Ratio comparison
+            sortino = summary.get('Sortino_Ratio', sharpe * 1.2)
+            st.markdown(f"""
+            **Sortino Ratio: {sortino:.2f}** (vs Sharpe {sharpe:.2f})
+            - Sortino only penalizes downside volatility
+            - Higher Sortino suggests asymmetric returns (good!)
+            - Ratio of {sortino/sharpe:.2f}x indicates {'strong upside bias ✅' if sortino/sharpe > 1.15 else 'balanced distribution'}
+            """)
+        
+        # Return Analysis
+        with st.expander("💰 Return Generation Analysis"):
+            cagr = summary['Annual_Return_CAGR'] * 100
+            years = summary['Trading_Years']
+            
+            st.markdown(f"""
+            **Total Return: {total_ret:.1f}%** over {years:.1f} years  
+            **CAGR: {cagr:.1f}%** per year
+            
+            **Benchmark Comparison:**
+            - S&P 500 historical CAGR: ~10%
+            - Your CAGR: {cagr:.1f}%
+            - **Outperformance: +{cagr-10:.1f}% annually** {'🚀' if cagr > 30 else '✅' if cagr > 15 else ''}
+            
+            **What this means:**
+            """)
+            
+            if cagr > 40:
+                st.success(f"""
+                🚀 **Exceptional return generation**  
+                - ${cagr:.1f}% CAGR is very rare (top 1% of strategies)
+                - $10,000 → ${10000 * (1 + cagr/100)**years:,.0f} in {years:.0f} years
+                - Beats most professional fund managers
+                - **Action:** Ensure returns are sustainable, not curve-fitted
+                """)
+            elif cagr > 20:
+                st.success(f"""
+                ✅ **Strong performance**  
+                - {cagr:.1f}% CAGR exceeds institutional targets (15-20%)
+                - $10,000 → ${10000 * (1 + cagr/100)**years:,.0f} in {years:.0f} years
+                - Consistent with successful quant funds
+                - **Action:** Ready for gradual capital deployment
+                """)
+            else:
+                st.info(f"""
+                📊 **Moderate returns**  
+                - {cagr:.1f}% beats S&P500 but room for improvement
+                - Consider alpha enhancement or leverage
+                - May be suitable for conservative investors
+                """)
+        
+        # Risk Analysis
+        with st.expander("📉 Drawdown & Risk Analysis"):
+            avg_dd = summary['Avg_Drawdown'] * 100
+            calmar = summary.get('Calmar_Ratio', cagr / abs(max_dd) * 100)
+            
+            st.markdown(f"""
+            **Maximum Drawdown: {max_dd:.1f}%**  
+            **Average Drawdown: {avg_dd:.1f}%**  
+            **Calmar Ratio: {calmar:.2f}** (CAGR / Max DD)
+            
+            **Risk Assessment:**
+            """)
+            
+            if abs(max_dd) < 30:
+                st.success("""
+                ✅ **Excellent risk control**  
+                - Max DD < 30% is exceptional for quant strategies
+                - Low probability of severe losses
+                - Suitable for institutional capital
+                - **Psychological impact:** Easier to hold through drawdowns
+                """)
+            elif abs(max_dd) < 50:
+                st.warning(f"""
+                ⚠️ **Moderate risk exposure**  
+                - {abs(max_dd):.1f}% max DD is typical for quant strategies
+                - Plan for worst-case: -50% to -60% possible
+                - **Mitigation strategies:**
+                  - Implement dynamic position sizing
+                  - Add stop-loss at -30% DD
+                  - Use volatility targeting (see DD Reduction guide)
+                - **Expected recovery time:** 3-6 months based on CAGR
+                """)
+            else:
+                st.error("""
+                📉 **High risk - Action required**  
+                - Drawdowns > 50% are psychologically difficult
+                - Most investors quit at -40% to -50%
+                - **Immediate actions:**
+                  1. Reduce position sizes by 30-50%
+                  2. Implement circuit breakers
+                  3. Review signal quality during drawdown periods
+                  4. Consider market regime filters
+                """)
+            
+            st.markdown(f"""
+            **Calmar Ratio Interpretation:**
+            - Calmar of {calmar:.2f} means you earn {calmar:.1f}% annually per 1% of max DD
+            - {'Excellent' if calmar > 1.0 else 'Good' if calmar > 0.5 else 'Needs improvement'} (target > 0.5)
+            """)
+        
+        # Trade Quality
+        with st.expander("🎲 Trade Quality & Consistency"):
+            profit_factor = summary.get('Profit_Factor', 1.3)
+            win_loss_ratio = summary.get('Win_Loss_Ratio', 1.1)
+            
+            st.markdown(f"""
+            **Win Rate: {win_rate:.1f}%**  
+            **Profit Factor: {profit_factor:.2f}**  
+            **Win/Loss Ratio: {win_loss_ratio:.2f}**
+            
+            **What these metrics reveal:**
+            """)
+            
+            st.markdown(f"""
+            **Win Rate Analysis:**
+            - {win_rate:.1f}% of trades are profitable
+            - {'High accuracy strategy ✅' if win_rate > 55 else 'Balanced approach' if win_rate > 45 else 'Low win rate ⚠️'}
+            - {100 - win_rate:.1f}% are losses (normal for mean-reversion)
+            
+            **Profit Factor: {profit_factor:.2f}**
+            - Gross Profit / Gross Loss ratio
+            - {profit_factor:.2f} means you make ${profit_factor:.2f} for every $1 lost
+            """)
+            
+            if profit_factor > 1.5:
+                st.success("🌟 Excellent - Winning trades significantly larger")
+            elif profit_factor > 1.2:
+                st.success("✅ Good - Sustainable over long term")
+            elif profit_factor > 1.0:
+                st.warning("⚠️ Marginal - Small edge, high transaction costs risk")
+            else:
+                st.error("❌ Losing strategy - Immediate review needed")
+            
+            st.markdown(f"""
+            **Win/Loss Ratio: {win_loss_ratio:.2f}**
+            - Average win is {win_loss_ratio:.2f}x the average loss
+            - {'Asymmetric payoff - ideal ✅' if win_loss_ratio > 1.5 else 'Balanced wins/losses' if win_loss_ratio > 0.8 else 'Losses larger than wins ⚠️'}
+            
+            **Trading Philosophy Insight:**
+            """)
+            
+            if win_rate > 55 and win_loss_ratio > 1.0:
+                st.success("""
+                💎 **High win rate + Positive payoff = Dream combination**  
+                - You win often AND win big
+                - Rare in quantitative trading
+                - Indicates strong signal quality
+                """)
+            elif win_rate < 50 and win_loss_ratio > 1.5:
+                st.info("""
+                🎯 **Classic trend-following profile**  
+                - Many small losses, few large wins
+                - Requires patience and discipline
+                - Critical: Don't cut winners early
+                """)
+            elif win_rate > 55 and win_loss_ratio < 1.0:
+                st.warning("""
+                ⚠️ **Mean-reversion profile with risk**  
+                - Frequent small wins, occasional large losses
+                - Warning: Vulnerable to tail events
+                - **Action:** Implement strict stop-losses
+                """)
+        
+        # Volatility Analysis
+        with st.expander("📊 Volatility & Stability"):
+            ann_vol = summary['Annual_Volatility'] * 100
+            
+            st.markdown(f"""
+            **Annual Volatility: {ann_vol:.1f}%**
+            
+            **Volatility Interpretation:**
+            - Measures how much returns fluctuate year-to-year
+            - Higher vol = more unpredictable returns
+            - Your vol: {ann_vol:.1f}%
+            - S&P 500 typical vol: ~20%
+            """)
+            
+            if ann_vol < 20:
+                st.success(f"""
+                ✅ **Low volatility strategy**  
+                - {ann_vol:.1f}% vol is very stable
+                - Smooth equity curve expected
+                - Suitable for risk-averse investors
+                - **Opportunity:** Could use moderate leverage (1.5-2x)
+                """)
+            elif ann_vol < 35:
+                st.info(f"""
+                📊 **Moderate volatility**  
+                - {ann_vol:.1f}% is typical for quant strategies
+                - Expect some monthly swings
+                - Risk-adjusted returns (Sharpe {sharpe:.2f}) are key
+                - **Position sizing:** Standard allocation OK
+                """)
+            else:
+                st.warning(f"""
+                ⚠️ **High volatility - Manage carefully**  
+                - {ann_vol:.1f}% vol means large monthly swings possible
+                - ±{ann_vol/12:.1f}% monthly moves expected
+                - **Risk management essential:**
+                  - Reduce position sizes
+                  - Implement volatility targeting
+                  - Use wider stop-losses (avoid whipsaws)
+                """)
+        
+        st.markdown("---")
+        
+        # === SECTION 3: EQUITY CURVE ===
+        st.markdown("### Portfolio Equity Curve")
         
         equity_df['Return_Pct'] = (equity_df['Cumulative_Return'] - 1) * 100
         
         fig = create_professional_chart(equity_df, "Cumulative Returns", "Return_Pct")
         st.plotly_chart(fig, use_container_width=True)
         
-        # Detailed metrics table
-        st.markdown('<h3>Performance Metrics</h3>', unsafe_allow_html=True)
-        st.dataframe(data['summary'], use_container_width=True, height=300)
+        # Drawdown chart
+        st.markdown("### Drawdown Over Time")
+        equity_df['Peak'] = equity_df['Cumulative_Return'].cummax()
+        equity_df['Drawdown_Pct'] = ((equity_df['Cumulative_Return'] - equity_df['Peak']) / equity_df['Peak'] * 100)
+        
+        fig_dd = go.Figure()
+        fig_dd.add_trace(go.Scatter(
+            x=equity_df.index,
+            y=equity_df['Drawdown_Pct'],
+            fill='tozeroy',
+            name='Drawdown',
+            line=dict(color='#c62828', width=2)
+        ))
+        
+        fig_dd.update_layout(
+            title="Portfolio Drawdown",
+            xaxis_title="Date",
+            yaxis_title="Drawdown %",
+            plot_bgcolor='white',
+            font=dict(family='Inter'),
+            height=300
+        )
+        
+        st.plotly_chart(fig_dd, use_container_width=True)
+        
+        # === SECTION 4: ACTIONABLE RECOMMENDATIONS ===
+        st.markdown("### 💡 Actionable Recommendations")
+        
+        recommendations = []
+        
+        # Based on Sharpe
+        if sharpe > 1.5:
+            recommendations.append(("✅ DEPLOY", "Strategy ready for live trading with institutional-grade Sharpe"))
+        elif sharpe > 1.0:
+            recommendations.append(("⚠️ OPTIMIZE", "Good performance - consider DD reduction for Grade A"))
+        else:
+            recommendations.append(("🔄 REVIEW", "Sharpe < 1.0 - revisit signal quality and combination"))
+        
+        # Based on DD
+        if abs(max_dd) > 45:
+            recommendations.append(("📉 REDUCE DD", f"Implement stop-loss and volatility targeting (target: -30%)"))
+        
+        # Based on Win Rate & PF
+        if profit_factor < 1.3:
+            recommendations.append(("🎯 IMPROVE EDGE", "Profit factor low - review entry/exit timing"))
+        
+        # Based on volatility
+        if ann_vol > 40:
+            recommendations.append(("📊 LOWER VOL", "High volatility - reduce position sizes by 30-50%"))
+        
+        for action, desc in recommendations:
+            st.info(f"**{action}:** {desc}")
+        
+        st.markdown("---")
+        
+        # === SECTION 5: DETAILED METRICS TABLE ===
+        st.markdown("### Complete Performance Metrics")
+        st.dataframe(data['summary'], use_container_width=True, height=200)
     
     # TAB 3: NEXT TRADE SIGNALS  
     with tabs[2]:
