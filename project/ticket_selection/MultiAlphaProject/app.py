@@ -178,7 +178,8 @@ def tai_tat_ca_du_lieu(thu_muc_ket_qua):
         'tom_tat': None,
         'equity': {},
         'ket_qua': {},
-        'giao_dich': {}
+        'giao_dich': {},
+        'signals': {}  # Added for signal_analysis compatibility
     }
     
     # Tải báo cáo tổng kết
@@ -202,6 +203,9 @@ def tai_tat_ca_du_lieu(thu_muc_ket_qua):
             elif file.startswith('trades_'):
                 ten_cluster = ten_cluster.replace('trades_', '')
                 du_lieu['giao_dich'][ten_cluster] = pd.read_csv(duong_dan)
+            elif file.startswith('signals_'):
+                ten_cluster = ten_cluster.replace('signals_', '')
+                du_lieu['signals'][ten_cluster] = pd.read_csv(duong_dan, index_col=0, parse_dates=True)
     
     return du_lieu
 
@@ -862,8 +866,13 @@ def main():
     with tabs[2]:
         st.markdown('<h2>Phân Tích Tín Hiệu Giao Dịch</h2>', unsafe_allow_html=True)
         
-        if du_lieu['ket_qua']:
-            display_signal_analysis_tab(du_lieu['ket_qua'], du_lieu['giao_dich'])
+        if du_lieu['signals']:
+            # Pass the full du_lieu dict which now has 'signals' key
+            cluster_name = list(du_lieu['signals'].keys())[0] if du_lieu['signals'] else None
+            if cluster_name:
+                display_signal_analysis_tab(du_lieu, cluster_name)
+            else:
+                st.info("Không có dữ liệu tín hiệu cho kịch bản này")
         else:
             st.info("Không có dữ liệu tín hiệu cho kịch bản này")
     
