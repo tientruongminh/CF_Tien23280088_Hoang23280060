@@ -1,0 +1,22 @@
+# Multi-Alpha Trading System - Python Dependencies
+
+# Core Data Processing
+pandas>=1.5.0
+numpy>=1.23.0
+
+# Machine Learning
+scikit-learn>=1.2.0
+
+# Statistical Analysis
+statsmodels>=0.14.0
+scipy>=1.10.0
+
+# Visualization & Dashboard
+streamlit>=1.25.0
+plotly>=5.14.0
+
+# AI Assistant (Optional)
+google-generativeai>=0.3.0
+
+# Utilities
+pathlib>=1.0.1

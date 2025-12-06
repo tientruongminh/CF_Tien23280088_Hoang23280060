@@ -1,0 +1,117 @@
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+Traceback (most recent call last):
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/main.py", line 114, in main
+    model = train_lambda_model(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/alphas/combiner_ml.py", line 24, in train_lambda_model
+    X_list = [scores_dict[name].stack().rename(name) for name in feature_names]
+              ~~~~~~~~~~~^^^^^^
+KeyError: 'VB'
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+Traceback (most recent call last):
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/main.py", line 114, in main
+    model = train_lambda_model(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/alphas/combiner_ml.py", line 24, in train_lambda_model
+    X_list = [scores_dict[name].stack().rename(name) for name in feature_names]
+              ~~~~~~~~~~~^^^^^^
+KeyError: 'VB'
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+Traceback (most recent call last):
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/main.py", line 114, in main
+    model = train_lambda_model(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/alphas/combiner_ml.py", line 24, in train_lambda_model
+    X_list = [scores_dict[name].stack().rename(name) for name in feature_names]
+              ~~~~~~~~~~~^^^^^^
+KeyError: 'VB'
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+Traceback (most recent call last):
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/main.py", line 114, in main
+    model = train_lambda_model(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/alphas/combiner_ml.py", line 24, in train_lambda_model
+    X_list = [scores_dict[name].stack().rename(name) for name in feature_names]
+              ~~~~~~~~~~~^^^^^^
+KeyError: 'VB'
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+Traceback (most recent call last):
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/main.py", line 114, in main
+    model = train_lambda_model(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/alphas/combiner_ml.py", line 24, in train_lambda_model
+    X_list = [scores_dict[name].stack().rename(name) for name in feature_names]
+              ~~~~~~~~~~~^^^^^^
+KeyError: 'VB'
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+Traceback (most recent call last):
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/main.py", line 114, in main
+    model = train_lambda_model(
+            ^^^^^^^^^^^^^^^^^^^
+  File "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/alphas/combiner_ml.py", line 24, in train_lambda_model
+    X_list = [scores_dict[name].stack().rename(name) for name in feature_names]
+              ~~~~~~~~~~~^^^^^^
+KeyError: 'VB'
+🚀 Bắt đầu xử lý 6 cụm...
+📁 Input:  /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/clusters
+📁 Output: /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/MultiAlpha_Results
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_healthcare_biotechnology
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+❌ ERROR in cluster_healthcare_biotechnology.csv: 'VB'
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_communication-services_advertising-agencies
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+❌ ERROR in cluster_communication-services_advertising-agencies.csv: 'VB'
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_technology_semiconductors
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+❌ ERROR in cluster_technology_semiconductors.csv: 'VB'
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_consumer-cyclical_furnishings-fixtures-appliances
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+❌ ERROR in cluster_consumer-cyclical_furnishings-fixtures-appliances.csv: 'VB'
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_financial-services_banks-regional
+============================================================
+   📊 Loaded 2514 days, 4 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+❌ ERROR in cluster_financial-services_banks-regional.csv: 'VB'
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_technology_software-application
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+❌ ERROR in cluster_technology_software-application.csv: 'VB'

@@ -1,0 +1,113 @@
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/MultiAlphaProject/data_loader.py:11: FutureWarning: DataFrame.fillna with 'method' is deprecated and will raise in a future version. Use obj.ffill() or obj.bfill() instead.
+  return df_close.fillna(method='ffill').fillna(method='bfill')
+🚀 Bắt đầu xử lý 6 cụm...
+📁 Input:  /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/clusters
+📁 Output: /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/MultiAlpha_Results
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_healthcare_biotechnology
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+⚠️  INSUFFICIENT DIVERSIFICATION: 2 stocks (min: 4)
+   Cluster SKIPPED for safety
+   ⚠️  Skipping cluster_healthcare_biotechnology.csv (insufficient diversification)
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_communication-services_advertising-agencies
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+⚠️  INSUFFICIENT DIVERSIFICATION: 2 stocks (min: 4)
+   Cluster SKIPPED for safety
+   ⚠️  Skipping cluster_communication-services_advertising-agencies.csv (insufficient diversification)
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_technology_semiconductors
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+⚠️  INSUFFICIENT DIVERSIFICATION: 2 stocks (min: 4)
+   Cluster SKIPPED for safety
+   ⚠️  Skipping cluster_technology_semiconductors.csv (insufficient diversification)
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_consumer-cyclical_furnishings-fixtures-appliances
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+⚠️  INSUFFICIENT DIVERSIFICATION: 2 stocks (min: 4)
+   Cluster SKIPPED for safety
+   ⚠️  Skipping cluster_consumer-cyclical_furnishings-fixtures-appliances.csv (insufficient diversification)
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_financial-services_banks-regional
+============================================================
+   📊 Loaded 2514 days, 4 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+  ⚙️ Preparing ML training data...
+  ⚙️ Preparing ML training data...
+  🔧 ML-learned lambdas: {'MR': np.float64(0.0004), 'Mom': np.float64(-0.0003), 'VB': np.float64(0.0004), 'XSR': np.float64(0.0009), 'Val': np.float64(0.0007)}
+   ✔ Combined score từ ML-learning λ
+💾 Đã lưu file kết quả: /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/MultiAlpha_Results/result_cluster_financial-services_banks-regional.csv
+📊 Đã lưu trade signals: /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/MultiAlpha_Results/trades_cluster_financial-services_banks-regional.csv
+📈 Đã lưu equity curve: /home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/MultiAlpha_Results/equity_cluster_financial-services_banks-regional.csv
+
+============================================================
+📊 BACKTEST SUMMARY: cluster_financial-services_banks-regional
+============================================================
+
+💰 RETURN METRICS:
+   Total Return:     2629.17%
+   Annual Return:    39.30%
+   Annual Volatility:33.13%
+
+⚖️ RISK-ADJUSTED METRICS:
+   Sharpe Ratio:     1.17
+   Sortino Ratio:    1.38
+   Calmar Ratio:     0.81
+
+📉 DRAWDOWN METRICS:
+   Max Drawdown:     -48.38%
+   Avg Drawdown:     -9.20%
+
+🎯 TRADE METRICS:
+   Win Rate:         52.55%
+   Profit Factor:    1.27
+   Win/Loss Ratio:   1.06
+
+📅 PERIOD: 2514 days (9.98 years)
+============================================================
+
+
+============================================================
+📌 PROCESSING CLUSTER: cluster_technology_software-application
+============================================================
+   📊 Loaded 2514 days, 2 tickers
+   🔢 Computing Alpha Signals...
+   ✔ Saved all alpha signals
+⚠️  INSUFFICIENT DIVERSIFICATION: 2 stocks (min: 4)
+   Cluster SKIPPED for safety
+   ⚠️  Skipping cluster_technology_software-application.csv (insufficient diversification)
+
+============================================================
+🏆 FINAL RANKING BY SHARPE RATIO
+============================================================
+⭐ cluster_financial-services_banks-regional.csv | Sharpe:   1.17 | Return:  2629.2% | MaxDD:  -48.4%
+============================================================
+🎉 HOÀN TẤT TOÀN BỘ CỤM!
