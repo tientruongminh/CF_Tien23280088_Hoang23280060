@@ -22,7 +22,7 @@ Không nhất thiết phải đúng 100% GICS, nhưng bản chất phải giốn
 
 - Return, volatility, beta, drawdown, pattern biến động tương đồng.
 
-- Để nếu có mispricing ngắn hạn, khi bạn long/short trong cụm, spread có cơ hội “mean-revert”.
+- Để nếu có mispricing ngắn hạn, khi long/short trong cụm, spread có cơ hội “mean-revert”.
 
 ### 1.3. Đủ thanh khoản và size tương đương
 
@@ -34,7 +34,7 @@ Không nhất thiết phải đúng 100% GICS, nhưng bản chất phải giốn
 
 - Trong 1 cụm, đa số cặp có correlation dương, tương đối cao trên returns.
 
-- Ít nhất một số cặp có cointegration ổn nếu bạn làm pairs kiểu statistical arbitrage cổ điển.
+- Ít nhất một số cặp có cointegration ổn nếu làm pairs kiểu statistical arbitrage cổ điển.
 
 ## 2. Những đặc trưng (features) dùng để định nghĩa cụm
 
@@ -56,13 +56,13 @@ Làm trên log-return ngày:
 Cùng beta, cùng vol ⇒ phản ứng tương tự với market shock.
 Idio vol tương tự ⇒ độ “noise” riêng từng mã tương đương.
 
-2.2. Nhóm đặc trưng “thanh khoản và size”
+### 2.2. Nhóm đặc trưng “thanh khoản và size”
 
 Từ data price–volume:
 
-- Average dollar volume: $avg\_dollar\_vol = mean(close * volume)$ trong 6–12 tháng gần nhất.
+- Average dollar volume: $avg_dollar_vol = mean(close * volume)$ trong 6–12 tháng gần nhất.
 
-- Turnover ratio proxy: Không có số lượng cổ phiếu lưu hành thì khó chính xác, nhưng bạn có thể lấy turnover tương đối bằng cách chuẩn hóa volume/volatility hay volume/price.
+- Turnover ratio proxy: Không có số lượng cổ phiếu lưu hành thì khó chính xác.
 
 Điều kiện lọc:
 
@@ -80,7 +80,7 @@ Từ data price–volume:
 
 - Với mỗi mã, có thể dùng:
 
-    - Correlation trung bình với các mã cùng sector “thô” (theo label yfinance nếu có)
+    - Correlation trung bình với các mã cùng sector “thô” 
 
     - Hoặc embedding theo PCA trên ma trận correlation.
 
@@ -125,8 +125,6 @@ Một cụm là một tập từ 2 cổ phiếu ${s_1, s_2, ..., s_{n}}$
 - **Giống nhau về hành vi thống kê** (beta, volatility, factor loading)  
 - **Có background correlation cao**  
 - **Thanh khoản hợp lý**
-
-Mình viết lại toàn bộ **phần 4** cho “đầy” và song song rõ ràng với phần 3 nhé. Bạn có thể copy nguyên block này dán vào report.
 
 ---
 
