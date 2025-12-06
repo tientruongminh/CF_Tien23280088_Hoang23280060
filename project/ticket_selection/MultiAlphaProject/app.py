@@ -17,7 +17,6 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # Import modules
-from chat_assistant import chat_tab
 from signal_analysis import display_signal_analysis_tab
 from metrics_config import (
     METRICS_CONFIG, CATEGORY_NAMES, CATEGORY_DESCRIPTIONS,
@@ -437,8 +436,7 @@ def main():
     tabs = st.tabs([
         "Đánh Giá Mô Hình",
         "Hiệu Suất Danh Mục",
-        "Tín Hiệu Giao Dịch",
-        "Trợ Lý AI"
+        "Tín Hiệu Giao Dịch"
     ])
     
     # TAB 1: ĐÁNH GIÁ MÔ HÌNH
@@ -875,11 +873,7 @@ def main():
                 st.info("Không có dữ liệu tín hiệu cho kịch bản này")
         else:
             st.info("Không có dữ liệu tín hiệu cho kịch bản này")
-    
-    # TAB 4: TRỢ LÝ AI
-    with tabs[3]:
-        st.markdown('<h2>Trợ Lý AI Gemini</h2>', unsafe_allow_html=True)
-        chat_tab(du_lieu)
+
 
 
 if __name__ == "__main__":
