@@ -1,8 +1,8 @@
 """
-Professional Multi-Alpha Dashboard - PRODUCTION VERSION
-======================================================
-Clean, elegant design with no icons. Professional color palette.
-Minimalist approach with maximum information.
+Hệ Thống Phân Tích Danh Mục Multi-Alpha
+=======================================
+Giao diện chuyên nghiệp, bảng màu Deep Navy & Charcoal
+Toàn bộ bằng tiếng Việt trừ keyword chuyên ngành
 """
 
 import streamlit as st
@@ -24,88 +24,83 @@ from metrics_config import (
     evaluate_metric, format_metric_value, get_metric_config
 )
 
-# Page config
+# Cấu hình trang
 st.set_page_config(
-    page_title="Multi-Alpha Portfolio Analytics",
+    page_title="Phân Tích Danh Mục Multi-Alpha",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Professional CSS - Deep Navy & Charcoal Theme
+# CSS chuyên nghiệp - Màu Deep Navy & Charcoal
 st.markdown("""
 <style>
-    /* Import professional font */
+    /* Import font chuyên nghiệp */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap');
     
-    /* Global styles */
+    /* Style toàn cục */
     * {
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
     
-    /* Main container */
+    /* Container chính */
     .main {
         background-color: #fafafa;
         padding: 2rem;
     }
     
-    /* Headers */
-    h1, h2, h3 {
-        color: #1a237e;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-    }
-    
+    /* Tiêu đề */
     h1 {
-        font-size: 2.25rem;
+        color: #1a237e;
+        font-weight: 700;
+        font-size: 2.2rem;
         margin-bottom: 0.5rem;
-        border-bottom: 3px solid #1a237e;
-        padding-bottom: 0.75rem;
     }
     
     h2 {
-        font-size: 1.5rem;
-        margin-top: 2rem;
         color: #263238;
+        font-weight: 600;
+        font-size: 1.5rem;
+        border-bottom: 2px solid #1a237e;
+        padding-bottom: 0.5rem;
+        margin-top: 2rem;
     }
     
     h3 {
-        font-size: 1.25rem;
         color: #37474f;
+        font-weight: 500;
+        font-size: 1.2rem;
     }
     
-    /* Metric cards */
+    /* Thẻ chỉ số */
     .metric-card {
-        background: white;
+        background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
         border: 1px solid #e0e0e0;
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        margin-bottom: 1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
     
     .metric-label {
-        font-size: 0.875rem;
         color: #757575;
-        font-weight: 500;
+        font-size: 0.85rem;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.5px;
         margin-bottom: 0.5rem;
     }
     
     .metric-value {
-        font-size: 2rem;
-        font-weight: 600;
-        font-family: 'Roboto Mono', monospace;
         color: #1a237e;
-        margin-bottom: 0.25rem;
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: 'Roboto Mono', monospace;
     }
     
     .metric-rating {
-        font-size: 0.875rem;
-        font-weight: 500;
-        padding: 0.25rem 0.75rem;
-        border-radius: 4px;
+        font-size: 0.8rem;
+        padding: 4px 12px;
+        border-radius: 20px;
         display: inline-block;
         margin-top: 0.5rem;
     }
@@ -116,8 +111,13 @@ st.markdown("""
     }
     
     .rating-good {
+        background-color: #e3f2fd;
+        color: #1565c0;
+    }
+    
+    .rating-warning {
         background-color: #fff3e0;
-        color: #f57c00;
+        color: #e65100;
     }
     
     .rating-poor {
@@ -125,70 +125,24 @@ st.markdown("""
         color: #c62828;
     }
     
-    /* Category sections */
-    .category-header {
-        background: linear-gradient(to right, #1a237e, #283593);
+    /* Thẻ điểm chữ */
+    .grade-card {
+        background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
         color: white;
-        padding: 1rem 1.5rem;
-        border-radius: 8px 8px 0 0;
-        font-size: 1.125rem;
-        font-weight: 600;
-        margin-top: 2rem;
     }
     
-    .category-description {
-        background: white;
-        border: 1px solid #e0e0e0;
-        border-top: none;
-        padding: 1rem 1.5rem;
-        color: #616161;
-        font-size: 0.875rem;
-        border-radius: 0 0 8px 8px;
-        margin-bottom: 1.5rem;
+    .grade-letter {
+        font-size: 4rem;
+        font-weight: 700;
+        margin: 0;
     }
     
-    /* Tables */
-    .dataframe {
-        font-family: 'Inter', sans-serif;
-        font-size: 0.875rem;
-    }
-    
-    .dataframe th {
-        background-color: #1a237e !important;
-        color: white !important;
-        font-weight: 600;
-        text-align: left;
-        padding: 0.75rem !important;
-    }
-    
-    .dataframe td {
-        padding: 0.75rem !important;
-        border-bottom: 1px solid #e0e0e0;
-    }
-    
-    /* Tabs */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 0;
-        background-color: white;
-        border-bottom: 2px solid #e0e0e0;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        padding: 1rem 2rem;
-        font-weight: 500;
-        color: #616161;
-        border-bottom: 3px solid transparent;
-    }
-    
-    .stTabs [data-baseweb="tab"]:hover {
-        color: #1a237e;
-        background-color: #f5f5f5;
-    }
-    
-    .stTabs [data-baseweb="tab"][aria-selected="true"] {
-        color: #1a237e;
-        border-bottom-color: #1a237e;
-        background-color: transparent;
+    .grade-description {
+        font-size: 1.1rem;
+        opacity: 0.9;
     }
     
     /* Sidebar */
@@ -196,640 +150,673 @@ st.markdown("""
         background-color: #263238;
     }
     
-    .sidebar .sidebar-content {
-        background-color: #263238;
-        color: white;
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
     }
     
-    /* Remove default Streamlit styling */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
+    .stTabs [data-baseweb="tab"] {
+        background-color: #f5f5f5;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 500;
+    }
     
-    /* Spacing */
-    .block-container {
-        padding-top: 2rem;
-        max-width: 1400px;
+    .stTabs [aria-selected="true"] {
+        background-color: #1a237e;
+        color: white;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# ==================== DATA LOADING ====================
 
-@st.cache_data
-def load_all_data(results_dir):
-    """Load all backtest results"""
-    data = {
-        'summary': None,
-        'results': {},
-        'signals': {},
-        'trades': {},
-        'equity': {}
+# ==================== HÀM TRỢ GIÚP ====================
+
+def tai_tat_ca_du_lieu(thu_muc_ket_qua):
+    """Tải tất cả dữ liệu kết quả"""
+    du_lieu = {
+        'tom_tat': None,
+        'equity': {},
+        'ket_qua': {},
+        'giao_dich': {}
     }
     
-    summary_path = os.path.join(results_dir, 'Final_Report.csv')
-    if os.path.exists(summary_path):
-        data['summary'] = pd.read_csv(summary_path)
+    # Tải báo cáo tổng kết
+    file_bao_cao = os.path.join(thu_muc_ket_qua, 'Final_Report.csv')
+    if os.path.exists(file_bao_cao):
+        du_lieu['tom_tat'] = pd.read_csv(file_bao_cao)
     
-    for file in os.listdir(results_dir):
-        if file.startswith('result_cluster_'):
-            cluster = file.replace('result_cluster_', '').replace('.csv', '')
-            data['results'][cluster] = pd.read_csv(
-                os.path.join(results_dir, file),
-                index_col=0,
-                parse_dates=True
-            )
-        elif file.startswith('signals_cluster_'):
-            cluster = file.replace('signals_cluster_', '').replace('.csv', '')
-            data['signals'][cluster] = pd.read_csv(
-                os.path.join(results_dir, file),
-                index_col=0,
-                parse_dates=True
-            )
-        elif file.startswith('trades_cluster_'):
-            cluster = file.replace('trades_cluster_', '').replace('.csv', '')
-            data['trades'][cluster] = pd.read_csv(
-                os.path.join(results_dir, file),
-                parse_dates=['Date']
-            )
-        elif file.startswith('equity_cluster_'):
-            cluster = file.replace('equity_cluster_', '').replace('.csv', '')
-            data['equity'][cluster] = pd.read_csv(
-                os.path.join(results_dir, file),
-                parse_dates=['Date']
-            )
+    # Tải từng loại file
+    for file in os.listdir(thu_muc_ket_qua):
+        if file.endswith('.csv'):
+            duong_dan = os.path.join(thu_muc_ket_qua, file)
+            ten_cluster = file.replace('.csv', '')
+            
+            if file.startswith('equity_'):
+                ten_cluster = ten_cluster.replace('equity_', '')
+                df = pd.read_csv(duong_dan, index_col=0, parse_dates=True)
+                du_lieu['equity'][ten_cluster] = df
+            elif file.startswith('result_'):
+                ten_cluster = ten_cluster.replace('result_', '')
+                du_lieu['ket_qua'][ten_cluster] = pd.read_csv(duong_dan, index_col=0, parse_dates=True)
+            elif file.startswith('trades_'):
+                ten_cluster = ten_cluster.replace('trades_', '')
+                du_lieu['giao_dich'][ten_cluster] = pd.read_csv(duong_dan)
     
-    return data
+    return du_lieu
 
-# ==================== MODEL EVALUATION ====================
 
-def evaluate_model_quality(summary_df):
-    """Comprehensive model evaluation"""
+def danh_gia_mo_hinh(du_lieu):
+    """Đánh giá tổng thể mô hình với điểm chữ"""
+    if du_lieu['tom_tat'] is None:
+        return None
     
-    # Get best cluster metrics
-    best = summary_df.loc[summary_df['Sharpe_Ratio'].idxmax()]
+    tom_tat = du_lieu['tom_tat'].iloc[0]
+    sharpe = tom_tat['Sharpe_Ratio']
+    cagr = tom_tat['Annual_Return_CAGR']
+    max_dd = abs(tom_tat['Max_Drawdown'])
+    win_rate = tom_tat['Win_Rate']
     
-    evaluation = {
-        'sharpe': best['Sharpe_Ratio'],
-        'cagr': best['Annual_Return_CAGR'],
-        'max_dd': best['Max_Drawdown'],
-        'win_rate': best['Win_Rate']
+    # Tính điểm dựa trên từng chỉ số
+    diem = 0
+    
+    # Sharpe (0-40 điểm)
+    if sharpe >= 2.0:
+        diem += 40
+    elif sharpe >= 1.5:
+        diem += 35
+    elif sharpe >= 1.0:
+        diem += 25
+    elif sharpe >= 0.5:
+        diem += 15
+    else:
+        diem += 5
+    
+    # CAGR (0-30 điểm)
+    if cagr >= 0.30:
+        diem += 30
+    elif cagr >= 0.20:
+        diem += 25
+    elif cagr >= 0.10:
+        diem += 15
+    else:
+        diem += 5
+    
+    # Max DD (0-20 điểm) - càng nhỏ càng tốt
+    if max_dd <= 0.20:
+        diem += 20
+    elif max_dd <= 0.30:
+        diem += 15
+    elif max_dd <= 0.40:
+        diem += 10
+    else:
+        diem += 5
+    
+    # Win Rate (0-10 điểm)
+    if win_rate >= 0.55:
+        diem += 10
+    elif win_rate >= 0.50:
+        diem += 7
+    else:
+        diem += 3
+    
+    # Xác định điểm chữ
+    if diem >= 90:
+        diem_chu = 'A+'
+        chat_luong = 'Xuất sắc'
+        loai_ndt = 'Tổ chức'
+    elif diem >= 80:
+        diem_chu = 'A'
+        chat_luong = 'Tuyệt vời'
+        loai_ndt = 'Tổ chức'
+    elif diem >= 70:
+        diem_chu = 'B+'
+        chat_luong = 'Rất tốt'
+        loai_ndt = 'Chuyên nghiệp'
+    elif diem >= 60:
+        diem_chu = 'B'
+        chat_luong = 'Tốt'
+        loai_ndt = 'Bán lẻ nâng cao'
+    elif diem >= 50:
+        diem_chu = 'C'
+        chat_luong = 'Trung bình'
+        loai_ndt = 'Bán lẻ'
+    else:
+        diem_chu = 'D'
+        chat_luong = 'Cần cải thiện'
+        loai_ndt = 'Chỉ nghiên cứu'
+    
+    return {
+        'diem': diem,
+        'diem_chu': diem_chu,
+        'chat_luong': chat_luong,
+        'loai_ndt': loai_ndt,
+        'sharpe': sharpe,
+        'cagr': cagr,
+        'max_dd': tom_tat['Max_Drawdown'],
+        'win_rate': win_rate,
+        'vuot_sp500_loi_nhuan': (cagr - 0.10) * 100
     }
-    
-    # Grade calculation
-    if evaluation['sharpe'] >= 1.5:
-        grade = 'A'
-        quality = 'Excellent'
-    elif evaluation['sharpe'] >= 1.0:
-        grade = 'B+'
-        quality = 'Good'
-    elif evaluation['sharpe'] >= 0.5:
-        grade = 'C'
-        quality = 'Acceptable'
-    else:
-        grade = 'D'
-        quality = 'Poor'
-    
-    # vs S&P500 benchmark
-    sp500_cagr = 0.10  # 10% historical
-    sp500_sharpe = 0.9
-    
-    evaluation['vs_sp500_return'] = (evaluation['cagr'] - sp500_cagr) * 100
-    evaluation['vs_sp500_sharpe'] = evaluation['sharpe'] - sp500_sharpe
-    evaluation['grade'] = grade
-    evaluation['quality'] = quality
-    
-    # Recommendation
-    if grade in ['A', 'B+']:
-        evaluation['recommendation'] = 'DEPLOY'
-        evaluation['allocation'] = '15-25%'
-        evaluation['investor_type'] = 'Institutional / Sophisticated'
-    elif grade == 'C':
-        evaluation['recommendation'] = 'CAUTIOUS'
-        evaluation['allocation'] = '5-10%'
-        evaluation['investor_type'] = 'Aggressive Only'
-    else:
-        evaluation['recommendation'] = 'AVOID'
-        evaluation['allocation'] = '0%'
-        evaluation['investor_type'] = 'None'
-    
-    return evaluation
 
-# ==================== METRIC DISPLAY (NO ICONS) ====================
 
-def display_metric_clean(col, label, value, rating, unit=''):
-    """Clean metric display without icons"""
-    
-    # Rating class
-    rating_class = {
-        'excellent': 'rating-excellent',
-        'good': 'rating-good',
-        'poor': 'rating-poor'
-    }.get(rating.lower(), 'rating-good')
-    
-    with col:
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-label">{label}</div>
-            <div class="metric-value">{value}{unit}</div>
-            <div class="metric-rating {rating_class}">{rating}</div>
-        </div>
-        """, unsafe_allow_html=True)
-
-# ==================== PROFESSIONAL CHARTS ====================
-
-def create_professional_chart(df, title, y_col, color='#1a237e'):
-    """Create clean professional chart"""
+def tao_bieu_do_chuyen_nghiep(df, tieu_de, cot_y):
+    """Tạo biểu đồ chuyên nghiệp với style Deep Navy"""
     fig = go.Figure()
     
     fig.add_trace(go.Scatter(
-        x=df['Date'],
-        y=df[y_col],
+        x=df.index,
+        y=df[cot_y],
         mode='lines',
-        line=dict(color=color, width=2),
+        name=tieu_de,
+        line=dict(color='#1a237e', width=2),
         fill='tozeroy',
-        fillcolor=f'rgba(26, 35, 126, 0.1)',
-        name=title,
-        hovertemplate='%{y:.2f}<extra></extra>'
+        fillcolor='rgba(26, 35, 126, 0.1)'
     ))
     
     fig.update_layout(
         title=dict(
-            text=title,
-            font=dict(size=16, color='#1a237e', family='Inter')
+            text=tieu_de,
+            font=dict(size=16, color='#263238', family='Inter')
         ),
         xaxis=dict(
-            title='',
-            gridcolor='#f5f5f5',
-            showgrid=True
+            title='Ngày',
+            showgrid=True,
+            gridcolor='#e0e0e0',
+            linecolor='#bdbdbd'
         ),
         yaxis=dict(
-            title='',
-            gridcolor='#f5f5f5',
-            showgrid=True
+            title='Phần trăm (%)',
+            showgrid=True,
+            gridcolor='#e0e0e0',
+            linecolor='#bdbdbd',
+            tickformat='.1f',
+            ticksuffix='%'
         ),
         plot_bgcolor='white',
         paper_bgcolor='white',
-        height=400,
-        margin=dict(l=60, r=40, t=60, b=40),
+        font=dict(family='Inter'),
         hovermode='x unified',
-        font=dict(family='Inter', size=12, color='#616161')
+        height=400,
+        margin=dict(l=60, r=20, t=60, b=40)
     )
     
     return fig
 
-# ==================== MAIN APP ====================
+
+def hien_thi_chi_so_gon(col, nhan, gia_tri, xep_hang="Tốt", hau_to=""):
+    """Hiển thị thẻ chỉ số gọn gàng không icon"""
+    mau_xep_hang = {
+        "Xuất sắc": "rating-excellent",
+        "Tuyệt vời": "rating-excellent",
+        "Rất tốt": "rating-good",
+        "Tốt": "rating-good",
+        "Trung bình": "rating-warning",
+        "Kém": "rating-poor"
+    }
+    
+    css_class = mau_xep_hang.get(xep_hang, "rating-good")
+    
+    col.markdown(f"""
+    <div class="metric-card">
+        <div class="metric-label">{nhan}</div>
+        <div class="metric-value">{gia_tri}{hau_to}</div>
+        <div class="metric-rating {css_class}">{xep_hang}</div>
+    </div>
+    """, unsafe_allow_html=True)
+
+
+# ==================== ỨNG DỤNG CHÍNH ====================
 
 def main():
-    # Header
-    st.markdown('<h1>Multi-Alpha Portfolio Analytics</h1>', unsafe_allow_html=True)
-    st.markdown('<p style="color: #757575; font-size: 1rem; margin-top: -0.5rem;">Professional Quantitative Trading System</p>', unsafe_allow_html=True)
+    # Tiêu đề
+    st.markdown('<h1>Phân Tích Danh Mục Multi-Alpha</h1>', unsafe_allow_html=True)
+    st.markdown('<p style="color: #757575; font-size: 1rem; margin-top: -0.5rem;">Hệ Thống Giao Dịch Định Lượng Chuyên Nghiệp</p>', unsafe_allow_html=True)
     
-    # Sidebar FIRST (sets results_dir)
+    # Sidebar TRƯỚC (đặt đường dẫn kết quả)
     with st.sidebar:
-        st.markdown("### System Overview")
+        st.markdown("### Tổng Quan Hệ Thống")
         
-        # Scenario Selection
+        # Chọn kịch bản
         st.markdown("---")
-        st.markdown("### 📊 Scenario Selection")
-        scenario = st.selectbox(
-            "Choose backtest scenario:",
+        st.markdown("### Chọn Kịch Bản")
+        kich_ban = st.selectbox(
+            "Chọn kịch bản backtest:",
             [
-                "Scenario 1: All 6 Clusters (No RM)",
-                "Scenario 2: Filtered 3 Clusters",
-                "Scenario 3: With Risk Management"
+                "Kịch bản 1: Tất cả 6 Cluster (Không RM)",
+                "Kịch bản 2: 3 Cluster đã lọc",
+                "Kịch bản 3: Có Risk Management"
             ],
             help="""
-            - Scenario 1: All clusters, 100% exposure, no filters
-            - Scenario 2: 3 good clusters only (Banks/Consumer/Tech SW)
-            - Scenario 3: Risk management enabled (70% exposure, min 4 stocks)
+            - Kịch bản 1: Tất cả cluster, 100% exposure, không lọc
+            - Kịch bản 2: Chỉ 3 cluster tốt (Banks/Consumer/Tech SW)
+            - Kịch bản 3: Risk management bật (70% exposure, tối thiểu 4 cổ phiếu)
             """
         )
         
-        # Map selection to directory
-        scenario_map = {
-            "Scenario 1: All 6 Clusters (No RM)": "MultiAlpha_Results_Scenario1",
-            "Scenario 2: Filtered 3 Clusters": "MultiAlpha_Results_Scenario2", 
-            "Scenario 3: With Risk Management": "MultiAlpha_Results_Scenario3"
+        # Map lựa chọn sang thư mục
+        ban_do_kich_ban = {
+            "Kịch bản 1: Tất cả 6 Cluster (Không RM)": "MultiAlpha_Results_Scenario1",
+            "Kịch bản 2: 3 Cluster đã lọc": "MultiAlpha_Results_Scenario2", 
+            "Kịch bản 3: Có Risk Management": "MultiAlpha_Results_Scenario3"
         }
         
-        selected_dir = scenario_map[scenario]
+        thu_muc_chon = ban_do_kich_ban[kich_ban]
         
-        # Use relative path from app.py location
-        from pathlib import Path
-        base_dir = Path(__file__).parent.parent.parent / "apply_strategy"
-        results_dir = str(base_dir / selected_dir)
+        # Sử dụng đường dẫn tương đối từ vị trí app.py
+        thu_muc_goc = Path(__file__).parent.parent.parent / "apply_strategy"
+        thu_muc_ket_qua = str(thu_muc_goc / thu_muc_chon)
         
-        # Display scenario info
-        if "Scenario 1" in scenario:
-            st.info("6 clusters, avg Sharpe 0.49")
-        elif "Scenario 2" in scenario:
-            st.success("3 clusters, avg Sharpe 0.78")
+        # Hiển thị thông tin kịch bản
+        if "Kịch bản 1" in kich_ban:
+            st.info("6 cluster, Sharpe trung bình 0.49")
+        elif "Kịch bản 2" in kich_ban:
+            st.success("3 cluster, Sharpe trung bình 0.78")
         else:
             st.warning("1 cluster, Sharpe 1.17")
         
         st.markdown("---")
-        st.metric("Active Scenarios", "3")
+        st.metric("Số kịch bản có sẵn", "3")
     
-    # NOW load data using results_dir from sidebar
-    if not os.path.exists(results_dir):
-        st.error(f"Results directory not found: {results_dir}")
+    # BÂY GIỜ tải dữ liệu sử dụng thu_muc_ket_qua từ sidebar
+    if not os.path.exists(thu_muc_ket_qua):
+        st.error(f"Không tìm thấy thư mục kết quả: {thu_muc_ket_qua}")
         return
     
-    with st.spinner(f'Loading {scenario}...'):
-        data = load_all_data(results_dir)
+    with st.spinner(f'Đang tải {kich_ban}...'):
+        du_lieu = tai_tat_ca_du_lieu(thu_muc_ket_qua)
     
-    if data['summary'] is None:
-        st.error("No data available")
+    if du_lieu['tom_tat'] is None:
+        st.error("Không có dữ liệu")
         return
     
-    # Main tabs
+    # Các tab chính
     tabs = st.tabs([
-        "Model Evaluation",
-        "Portfolio Performance",
-        "Next Trade Signals",
-        "AI Assistant"
+        "Đánh Giá Mô Hình",
+        "Hiệu Suất Danh Mục",
+        "Tín Hiệu Giao Dịch",
+        "Trợ Lý AI"
     ])
     
-    # TAB 1: MODEL EVALUATION
+    # TAB 1: ĐÁNH GIÁ MÔ HÌNH
     with tabs[0]:
-        st.markdown('<h2>Model Quality Assessment</h2>', unsafe_allow_html=True)
+        st.markdown('<h2>Đánh Giá Mô Hình</h2>', unsafe_allow_html=True)
         
-        eval_result = evaluate_model_quality(data['summary'])
+        ket_qua_dg = danh_gia_mo_hinh(du_lieu)
         
-        # Overall Grade
-        col1, col2, col3 = st.columns(3)
-        
-        with col1:
-            st.markdown(f"""
-            <div class="metric-card" style="text-align: center;">
-                <div class="metric-label">Overall Grade</div>
-                <div class="metric-value" style="font-size: 4rem;">{eval_result['grade']}</div>
-                <div class="metric-rating rating-{eval_result['quality'].lower()}">{eval_result['quality']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            st.markdown(f"""
-            <div class="metric-card" style="text-align: center;">
-                <div class="metric-label">Recommendation</div>
-                <div class="metric-value" style="font-size: 2.5rem; color: #2e7d32;">{eval_result['recommendation']}</div>
-                <div class="metric-rating rating-excellent">Allocation: {eval_result['allocation']}</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col3:
-            st.markdown(f"""
-            <div class="metric-card" style="text-align: center;">
-                <div class="metric-label">Investor Type</div>
-                <div class="metric-value" style="font-size: 1.5rem;">{eval_result['investor_type']}</div>
-                <div class="metric-rating rating-good">Suitable For</div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown("---")
-        
-        # Performance vs Benchmark
-        st.markdown('<h3>Benchmark Comparison</h3>', unsafe_allow_html=True)
-        
-        col1, col2, col3, col4 = st.columns(4)
-        
-        display_metric_clean(col1, "Sharpe Ratio", f"{eval_result['sharpe']:.2f}", eval_result['quality'])
-        display_metric_clean(col2, "Annual Return", f"{eval_result['cagr']*100:.1f}", "Excellent", "%")
-        display_metric_clean(col3, "vs S&P500", f"+{eval_result['vs_sp500_return']:.1f}", "Excellent", "%")
-        display_metric_clean(col4, "Max Drawdown", f"{eval_result['max_dd']*100:.1f}", "Good", "%")
+        if ket_qua_dg:
+            col1, col2, col3 = st.columns([1, 1, 1])
+            
+            with col1:
+                st.markdown(f"""
+                <div class="grade-card">
+                    <div class="metric-label" style="color: rgba(255,255,255,0.7);">Điểm Tổng Thể</div>
+                    <div class="grade-letter">{ket_qua_dg['diem_chu']}</div>
+                    <div class="grade-description">{ket_qua_dg['chat_luong']}</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col2:
+                st.markdown(f"""
+                <div class="metric-card" style="text-align: center;">
+                    <div class="metric-label">Điểm Số</div>
+                    <div class="metric-value">{ket_qua_dg['diem']}/100</div>
+                    <div class="metric-rating rating-good">Điểm tổng hợp</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            with col3:
+                st.markdown(f"""
+                <div class="metric-card" style="text-align: center;">
+                    <div class="metric-label">Loại Nhà Đầu Tư</div>
+                    <div class="metric-value" style="font-size: 1.5rem;">{ket_qua_dg['loai_ndt']}</div>
+                    <div class="metric-rating rating-good">Phù hợp cho</div>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            st.markdown("---")
+            
+            # So sánh với benchmark
+            st.markdown('<h3>So Sánh Với Benchmark</h3>', unsafe_allow_html=True)
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            hien_thi_chi_so_gon(col1, "Sharpe Ratio", f"{ket_qua_dg['sharpe']:.2f}", ket_qua_dg['chat_luong'])
+            hien_thi_chi_so_gon(col2, "Lợi Nhuận Hàng Năm", f"{ket_qua_dg['cagr']*100:.1f}", "Xuất sắc", "%")
+            hien_thi_chi_so_gon(col3, "So với S&P500", f"+{ket_qua_dg['vuot_sp500_loi_nhuan']:.1f}", "Xuất sắc", "%")
+            hien_thi_chi_so_gon(col4, "Sụt Giảm Tối Đa", f"{ket_qua_dg['max_dd']*100:.1f}", "Tốt", "%")
     
-    # TAB 2: PORTFOLIO PERFORMANCE
+    # TAB 2: HIỆU SUẤT DANH MỤC
     with tabs[1]:
-        st.markdown('<h2>Portfolio Performance Analysis</h2>', unsafe_allow_html=True)
+        st.markdown('<h2>Phân Tích Hiệu Suất Danh Mục</h2>', unsafe_allow_html=True)
         
-        # Get cluster data
-        cluster = list(data['equity'].keys())[0]
-        equity_df = data['equity'][cluster]
-        summary = data['summary'].iloc[0]
+        # Lấy dữ liệu cluster
+        cluster = list(du_lieu['equity'].keys())[0]
+        df_equity = du_lieu['equity'][cluster]
+        tom_tat = du_lieu['tom_tat'].iloc[0]
         
-        # === SECTION 1: KEY METRICS OVERVIEW ===
-        st.markdown("### Key Performance Metrics")
+        # === PHẦN 1: TỔNG QUAN CHỈ SỐ CHÍNH ===
+        st.markdown("### Các Chỉ Số Hiệu Suất Chính")
         
         col1, col2, col3, col4 = st.columns(4)
         
-        sharpe = summary['Sharpe_Ratio']
-        total_ret = summary['Total_Return'] * 100
-        max_dd = summary['Max_Drawdown'] * 100
-        win_rate = summary['Win_Rate'] * 100
+        sharpe = tom_tat['Sharpe_Ratio']
+        tong_ln = tom_tat['Total_Return'] * 100
+        max_dd = tom_tat['Max_Drawdown'] * 100
+        ty_le_thang = tom_tat['Win_Rate'] * 100
         
         with col1:
             st.metric("Sharpe Ratio", f"{sharpe:.2f}")
             if sharpe > 1.5:
-                st.success("🌟 Excellent - Institutional grade")
+                st.success("🌟 Xuất sắc - Cấp độ tổ chức")
             elif sharpe > 1.0:
-                st.success("✅ Good - Above average")
+                st.success("✅ Tốt - Trên trung bình")
             elif sharpe > 0.5:
-                st.info("⚠️ Acceptable - Below target")
+                st.info("⚠️ Chấp nhận được - Dưới mục tiêu")
             else:
-                st.error("❌ Poor - Needs improvement")
+                st.error("❌ Kém - Cần cải thiện")
         
         with col2:
-            st.metric("Total Return", f"{total_ret:.1f}%")
-            if total_ret > 1000:
-                st.success("🚀 Outstanding performance")
-            elif total_ret > 300:
-                st.success("✅ Strong returns")
+            st.metric("Tổng Lợi Nhuận", f"{tong_ln:.1f}%")
+            if tong_ln > 1000:
+                st.success("🚀 Hiệu suất xuất sắc")
+            elif tong_ln > 300:
+                st.success("✅ Lợi nhuận mạnh")
             else:
-                st.info("📊 Moderate gains")
+                st.info("📊 Tăng trưởng vừa phải")
         
         with col3:
-            st.metric("Max Drawdown", f"{max_dd:.1f}%")
+            st.metric("Sụt Giảm Tối Đa", f"{max_dd:.1f}%")
             if abs(max_dd) < 30:
-                st.success("✅ Well controlled")
+                st.success("✅ Kiểm soát tốt")
             elif abs(max_dd) < 50:
-                st.warning("⚠️ Moderate risk")
+                st.warning("⚠️ Rủi ro trung bình")
             else:
-                st.error("📉 High risk - Review strategy")
+                st.error("📉 Rủi ro cao - Cần xem xét")
         
         with col4:
-            st.metric("Win Rate", f"{win_rate:.1f}%")
-            if win_rate > 55:
-                st.success("🎯 Consistently profitable")
-            elif win_rate > 50:
-                st.info("✅ Slight edge")
+            st.metric("Tỷ Lệ Thắng", f"{ty_le_thang:.1f}%")
+            if ty_le_thang > 55:
+                st.success("🎯 Sinh lời ổn định")
+            elif ty_le_thang > 50:
+                st.info("✅ Có lợi thế nhỏ")
             else:
-                st.warning("⚠️ Need higher accuracy")
+                st.warning("⚠️ Cần độ chính xác cao hơn")
         
         st.markdown("---")
         
-        # === SECTION 2: DETAILED INSIGHTS ===
-        st.markdown("### 📊 Performance Insights & Interpretation")
+        # === PHẦN 2: PHÂN TÍCH CHI TIẾT ===
+        st.markdown("### 📊 Phân Tích & Diễn Giải Hiệu Suất")
         
-        # Risk-Adjusted Performance
-        with st.expander("🎯 Risk-Adjusted Performance Analysis", expanded=True):
+        # Phân tích hiệu suất điều chỉnh rủi ro
+        with st.expander("🎯 Phân Tích Hiệu Suất Điều Chỉnh Rủi Ro", expanded=True):
             st.markdown(f"""
             **Sharpe Ratio: {sharpe:.2f}**
             
-            **What it means:**
-            - Measures return per unit of risk taken
-            - Sharpe > 1.0 is considered good for quant strategies
-            - Your Sharpe of {sharpe:.2f} is {'**excellent**' if sharpe > 1.5 else '**good**' if sharpe > 1.0 else 'acceptable'}
+            **Ý nghĩa:**
+            - Đo lường lợi nhuận trên mỗi đơn vị rủi ro
+            - Sharpe > 1.0 được coi là tốt cho chiến lược định lượng
+            - Sharpe của bạn là {sharpe:.2f} - {'**xuất sắc**' if sharpe > 1.5 else '**tốt**' if sharpe > 1.0 else 'chấp nhận được'}
             
-            **Interpretation:**
+            **Diễn giải:**
             """)
             
             if sharpe > 1.5:
                 st.success("""
-                ✅ **Institutional-grade performance**  
-                - Your strategy delivers exceptional risk-adjusted returns
-                - Comparable to top hedge funds (target: Sharpe > 1.5)
-                - Strong candidate for live deployment
-                - Expected to outperform 90%+ of market participants
+                ✅ **Hiệu suất cấp độ tổ chức**  
+                - Chiến lược mang lại lợi nhuận điều chỉnh rủi ro xuất sắc
+                - Tương đương với các quỹ hedge fund hàng đầu (mục tiêu: Sharpe > 1.5)
+                - Ứng viên sáng giá để triển khai thực tế
+                - Dự kiến vượt trội 90%+ người tham gia thị trường
                 """)
             elif sharpe > 1.0:
                 st.info("""
-                ✅ **Above-average performance**  
-                - Strategy shows solid risk management
-                - Beats typical buy-and-hold (Sharpe ~0.5)
-                - Room for improvement through DD reduction
-                - Consider implementing volatility targeting
+                ✅ **Hiệu suất trên trung bình**  
+                - Chiến lược có quản lý rủi ro tốt
+                - Vượt trội so với buy-and-hold thông thường (Sharpe ~0.5)
+                - Còn dư địa cải thiện thông qua giảm DD
+                - Cân nhắc áp dụng volatility targeting
                 """)
             else:
                 st.warning("""
-                ⚠️ **Needs optimization**  
-                - Returns don't justify the risk taken
-                - Review signal quality and combination
-                - Implement stricter risk management
-                - Consider portfolio diversification
+                ⚠️ **Cần tối ưu hóa**  
+                - Lợi nhuận chưa xứng đáng với rủi ro
+                - Xem lại chất lượng tín hiệu và cách kết hợp
+                - Áp dụng quản lý rủi ro nghiêm ngặt hơn
+                - Cân nhắc đa dạng hóa danh mục
                 """)
             
-            # Sortino Ratio comparison
-            sortino = summary.get('Sortino_Ratio', sharpe * 1.2)
+            # So sánh Sortino Ratio
+            sortino = tom_tat.get('Sortino_Ratio', sharpe * 1.2)
             st.markdown(f"""
-            **Sortino Ratio: {sortino:.2f}** (vs Sharpe {sharpe:.2f})
-            - Sortino only penalizes downside volatility
-            - Higher Sortino suggests asymmetric returns (good!)
-            - Ratio of {sortino/sharpe:.2f}x indicates {'strong upside bias ✅' if sortino/sharpe > 1.15 else 'balanced distribution'}
+            **Sortino Ratio: {sortino:.2f}** (so với Sharpe {sharpe:.2f})
+            - Sortino chỉ phạt biến động chiều giảm (downside)
+            - Sortino cao hơn cho thấy lợi nhuận không đối xứng (tốt!)
+            - Tỷ lệ {sortino/sharpe:.2f}x cho thấy {'xu hướng tăng mạnh ✅' if sortino/sharpe > 1.15 else 'phân phối cân bằng'}
             """)
         
-        # Return Analysis
-        with st.expander("💰 Return Generation Analysis"):
-            cagr = summary['Annual_Return_CAGR'] * 100
-            years = summary['Trading_Years']
+        # Phân tích lợi nhuận
+        with st.expander("💰 Phân Tích Sinh Lời"):
+            cagr = tom_tat['Annual_Return_CAGR'] * 100
+            so_nam = tom_tat['Trading_Years']
             
             st.markdown(f"""
-            **Total Return: {total_ret:.1f}%** over {years:.1f} years  
-            **CAGR: {cagr:.1f}%** per year
+            **Tổng Lợi Nhuận: {tong_ln:.1f}%** trong {so_nam:.1f} năm  
+            **CAGR: {cagr:.1f}%** mỗi năm
             
-            **Benchmark Comparison:**
-            - S&P 500 historical CAGR: ~10%
-            - Your CAGR: {cagr:.1f}%
-            - **Outperformance: +{cagr-10:.1f}% annually** {'🚀' if cagr > 30 else '✅' if cagr > 15 else ''}
+            **So Sánh Benchmark:**
+            - CAGR lịch sử S&P 500: ~10%
+            - CAGR của bạn: {cagr:.1f}%
+            - **Vượt trội: +{cagr-10:.1f}% hàng năm** {'🚀' if cagr > 30 else '✅' if cagr > 15 else ''}
             
-            **What this means:**
+            **Điều này có nghĩa:**
             """)
             
             if cagr > 40:
                 st.success(f"""
-                🚀 **Exceptional return generation**  
-                - ${cagr:.1f}% CAGR is very rare (top 1% of strategies)
-                - $10,000 → ${10000 * (1 + cagr/100)**years:,.0f} in {years:.0f} years
-                - Beats most professional fund managers
-                - **Action:** Ensure returns are sustainable, not curve-fitted
+                🚀 **Sinh lời xuất sắc**  
+                - CAGR {cagr:.1f}% rất hiếm (top 1% chiến lược)
+                - $10,000 → ${10000 * (1 + cagr/100)**so_nam:,.0f} trong {so_nam:.0f} năm
+                - Vượt trội hầu hết các quỹ chuyên nghiệp
+                - **Hành động:** Đảm bảo lợi nhuận bền vững, không phải curve-fitting
                 """)
             elif cagr > 20:
                 st.success(f"""
-                ✅ **Strong performance**  
-                - {cagr:.1f}% CAGR exceeds institutional targets (15-20%)
-                - $10,000 → ${10000 * (1 + cagr/100)**years:,.0f} in {years:.0f} years
-                - Consistent with successful quant funds
-                - **Action:** Ready for gradual capital deployment
+                ✅ **Hiệu suất mạnh**  
+                - CAGR {cagr:.1f}% vượt mục tiêu tổ chức (15-20%)
+                - $10,000 → ${10000 * (1 + cagr/100)**so_nam:,.0f} trong {so_nam:.0f} năm
+                - Tương đương với các quỹ quant thành công
+                - **Hành động:** Sẵn sàng triển khai vốn từ từ
                 """)
             else:
                 st.info(f"""
-                📊 **Moderate returns**  
-                - {cagr:.1f}% beats S&P500 but room for improvement
-                - Consider alpha enhancement or leverage
-                - May be suitable for conservative investors
+                📊 **Lợi nhuận vừa phải**  
+                - CAGR {cagr:.1f}% vượt S&P500 nhưng còn dư địa cải thiện
+                - Cân nhắc tăng alpha hoặc sử dụng đòn bẩy
+                - Có thể phù hợp với nhà đầu tư thận trọng
                 """)
         
-        # Risk Analysis
-        with st.expander("📉 Drawdown & Risk Analysis"):
-            avg_dd = summary['Avg_Drawdown'] * 100
-            calmar = summary.get('Calmar_Ratio', cagr / abs(max_dd) * 100)
+        # Phân tích rủi ro
+        with st.expander("📉 Phân Tích Sụt Giảm & Rủi Ro"):
+            dd_tb = tom_tat['Avg_Drawdown'] * 100
+            calmar = tom_tat.get('Calmar_Ratio', cagr / abs(max_dd) * 100)
             
             st.markdown(f"""
-            **Maximum Drawdown: {max_dd:.1f}%**  
-            **Average Drawdown: {avg_dd:.1f}%**  
+            **Sụt Giảm Tối Đa: {max_dd:.1f}%**  
+            **Sụt Giảm Trung Bình: {dd_tb:.1f}%**  
             **Calmar Ratio: {calmar:.2f}** (CAGR / Max DD)
             
-            **Risk Assessment:**
+            **Đánh Giá Rủi Ro:**
             """)
             
             if abs(max_dd) < 30:
                 st.success("""
-                ✅ **Excellent risk control**  
-                - Max DD < 30% is exceptional for quant strategies
-                - Low probability of severe losses
-                - Suitable for institutional capital
-                - **Psychological impact:** Easier to hold through drawdowns
+                ✅ **Kiểm soát rủi ro xuất sắc**  
+                - Max DD < 30% là ngoại lệ cho chiến lược quant
+                - Xác suất thua lỗ nghiêm trọng thấp
+                - Phù hợp cho vốn tổ chức
+                - **Tâm lý:** Dễ dàng giữ vững qua các đợt sụt giảm
                 """)
             elif abs(max_dd) < 50:
                 st.warning(f"""
-                ⚠️ **Moderate risk exposure**  
-                - {abs(max_dd):.1f}% max DD is typical for quant strategies
-                - Plan for worst-case: -50% to -60% possible
-                - **Mitigation strategies:**
-                  - Implement dynamic position sizing
-                  - Add stop-loss at -30% DD
-                  - Use volatility targeting (see DD Reduction guide)
-                - **Expected recovery time:** 3-6 months based on CAGR
+                ⚠️ **Mức độ rủi ro trung bình**  
+                - Max DD {abs(max_dd):.1f}% là điển hình cho chiến lược quant
+                - Lập kế hoạch cho tình huống xấu nhất: -50% đến -60% có thể xảy ra
+                - **Chiến lược giảm thiểu:**
+                  - Áp dụng đặt kích thước vị thế động
+                  - Thêm stop-loss tại -30% DD
+                  - Sử dụng volatility targeting
+                - **Thời gian phục hồi dự kiến:** 3-6 tháng dựa trên CAGR
                 """)
             else:
                 st.error("""
-                📉 **High risk - Action required**  
-                - Drawdowns > 50% are psychologically difficult
-                - Most investors quit at -40% to -50%
-                - **Immediate actions:**
-                  1. Reduce position sizes by 30-50%
-                  2. Implement circuit breakers
-                  3. Review signal quality during drawdown periods
-                  4. Consider market regime filters
+                📉 **Rủi ro cao - Cần hành động**  
+                - Drawdown > 50% rất khó chịu về mặt tâm lý
+                - Hầu hết nhà đầu tư bỏ cuộc ở mức -40% đến -50%
+                - **Hành động ngay:**
+                  1. Giảm kích thước vị thế 30-50%
+                  2. Áp dụng circuit breaker
+                  3. Xem lại chất lượng tín hiệu trong giai đoạn sụt giảm
+                  4. Cân nhắc bộ lọc regime thị trường
                 """)
             
             st.markdown(f"""
-            **Calmar Ratio Interpretation:**
-            - Calmar of {calmar:.2f} means you earn {calmar:.1f}% annually per 1% of max DD
-            - {'Excellent' if calmar > 1.0 else 'Good' if calmar > 0.5 else 'Needs improvement'} (target > 0.5)
+            **Diễn Giải Calmar Ratio:**
+            - Calmar {calmar:.2f} nghĩa là bạn kiếm {calmar:.1f}% hàng năm mỗi 1% max DD
+            - {'Xuất sắc' if calmar > 1.0 else 'Tốt' if calmar > 0.5 else 'Cần cải thiện'} (mục tiêu > 0.5)
             """)
         
-        # Trade Quality
-        with st.expander("🎲 Trade Quality & Consistency"):
-            profit_factor = summary.get('Profit_Factor', 1.3)
-            win_loss_ratio = summary.get('Win_Loss_Ratio', 1.1)
+        # Chất lượng giao dịch
+        with st.expander("🎲 Chất Lượng & Tính Nhất Quán Giao Dịch"):
+            profit_factor = tom_tat.get('Profit_Factor', 1.3)
+            ty_le_ln_lo = tom_tat.get('Win_Loss_Ratio', 1.1)
             
             st.markdown(f"""
-            **Win Rate: {win_rate:.1f}%**  
+            **Tỷ Lệ Thắng: {ty_le_thang:.1f}%**  
             **Profit Factor: {profit_factor:.2f}**  
-            **Win/Loss Ratio: {win_loss_ratio:.2f}**
+            **Tỷ Lệ Lãi/Lỗ: {ty_le_ln_lo:.2f}**
             
-            **What these metrics reveal:**
+            **Các chỉ số này cho thấy:**
             """)
             
             st.markdown(f"""
-            **Win Rate Analysis:**
-            - {win_rate:.1f}% of trades are profitable
-            - {'High accuracy strategy ✅' if win_rate > 55 else 'Balanced approach' if win_rate > 45 else 'Low win rate ⚠️'}
-            - {100 - win_rate:.1f}% are losses (normal for mean-reversion)
+            **Phân Tích Tỷ Lệ Thắng:**
+            - {ty_le_thang:.1f}% giao dịch có lãi
+            - {'Chiến lược độ chính xác cao ✅' if ty_le_thang > 55 else 'Cách tiếp cận cân bằng' if ty_le_thang > 45 else 'Tỷ lệ thắng thấp ⚠️'}
+            - {100 - ty_le_thang:.1f}% là thua lỗ (bình thường cho mean-reversion)
             
             **Profit Factor: {profit_factor:.2f}**
-            - Gross Profit / Gross Loss ratio
-            - {profit_factor:.2f} means you make ${profit_factor:.2f} for every $1 lost
+            - Tỷ lệ Tổng Lãi / Tổng Lỗ
+            - {profit_factor:.2f} nghĩa là bạn kiếm ${profit_factor:.2f} cho mỗi $1 thua
             """)
             
             if profit_factor > 1.5:
-                st.success("🌟 Excellent - Winning trades significantly larger")
+                st.success("🌟 Xuất sắc - Giao dịch thắng lớn hơn đáng kể")
             elif profit_factor > 1.2:
-                st.success("✅ Good - Sustainable over long term")
+                st.success("✅ Tốt - Bền vững về dài hạn")
             elif profit_factor > 1.0:
-                st.warning("⚠️ Marginal - Small edge, high transaction costs risk")
+                st.warning("⚠️ Biên lợi nhuận mỏng - Rủi ro chi phí giao dịch cao")
             else:
-                st.error("❌ Losing strategy - Immediate review needed")
+                st.error("❌ Chiến lược thua lỗ - Cần xem xét ngay")
             
             st.markdown(f"""
-            **Win/Loss Ratio: {win_loss_ratio:.2f}**
-            - Average win is {win_loss_ratio:.2f}x the average loss
-            - {'Asymmetric payoff - ideal ✅' if win_loss_ratio > 1.5 else 'Balanced wins/losses' if win_loss_ratio > 0.8 else 'Losses larger than wins ⚠️'}
+            **Tỷ Lệ Lãi/Lỗ: {ty_le_ln_lo:.2f}**
+            - Lãi trung bình gấp {ty_le_ln_lo:.2f}x lỗ trung bình
+            - {'Payoff không đối xứng - lý tưởng ✅' if ty_le_ln_lo > 1.5 else 'Lãi/lỗ cân bằng' if ty_le_ln_lo > 0.8 else 'Lỗ lớn hơn lãi ⚠️'}
             
-            **Trading Philosophy Insight:**
+            **Insight Triết Lý Giao Dịch:**
             """)
             
-            if win_rate > 55 and win_loss_ratio > 1.0:
+            if ty_le_thang > 55 and ty_le_ln_lo > 1.0:
                 st.success("""
-                💎 **High win rate + Positive payoff = Dream combination**  
-                - You win often AND win big
-                - Rare in quantitative trading
-                - Indicates strong signal quality
+                💎 **Tỷ lệ thắng cao + Payoff dương = Sự kết hợp lý tưởng**  
+                - Bạn thắng thường xuyên VÀ thắng lớn
+                - Hiếm trong giao dịch định lượng
+                - Cho thấy chất lượng tín hiệu mạnh
                 """)
-            elif win_rate < 50 and win_loss_ratio > 1.5:
+            elif ty_le_thang < 50 and ty_le_ln_lo > 1.5:
                 st.info("""
-                🎯 **Classic trend-following profile**  
-                - Many small losses, few large wins
-                - Requires patience and discipline
-                - Critical: Don't cut winners early
+                🎯 **Hồ sơ trend-following điển hình**  
+                - Nhiều thua lỗ nhỏ, ít thắng lớn
+                - Đòi hỏi kiên nhẫn và kỷ luật
+                - Quan trọng: Đừng cắt lãi sớm
                 """)
-            elif win_rate > 55 and win_loss_ratio < 1.0:
+            elif ty_le_thang > 55 and ty_le_ln_lo < 1.0:
                 st.warning("""
-                ⚠️ **Mean-reversion profile with risk**  
-                - Frequent small wins, occasional large losses
-                - Warning: Vulnerable to tail events
-                - **Action:** Implement strict stop-losses
+                ⚠️ **Hồ sơ mean-reversion có rủi ro**  
+                - Thắng nhỏ thường xuyên, thua lớn đôi khi
+                - Cảnh báo: Dễ bị tổn thương bởi tail event
+                - **Hành động:** Áp dụng stop-loss nghiêm ngặt
                 """)
         
-        # Volatility Analysis
-        with st.expander("📊 Volatility & Stability"):
-            ann_vol = summary['Annual_Volatility'] * 100
+        # Phân tích biến động
+        with st.expander("📊 Phân Tích Biến Động & Ổn Định"):
+            bien_dong_nam = tom_tat['Annual_Volatility'] * 100
             
             st.markdown(f"""
-            **Annual Volatility: {ann_vol:.1f}%**
+            **Biến Động Hàng Năm: {bien_dong_nam:.1f}%**
             
-            **Volatility Interpretation:**
-            - Measures how much returns fluctuate year-to-year
-            - Higher vol = more unpredictable returns
-            - Your vol: {ann_vol:.1f}%
-            - S&P 500 typical vol: ~20%
+            **Diễn Giải Biến Động:**
+            - Đo lường mức độ dao động lợi nhuận năm này qua năm khác
+            - Biến động cao = lợi nhuận khó đoán hơn
+            - Biến động của bạn: {bien_dong_nam:.1f}%
+            - Biến động S&P 500 thường: ~20%
             """)
             
-            if ann_vol < 20:
+            if bien_dong_nam < 20:
                 st.success(f"""
-                ✅ **Low volatility strategy**  
-                - {ann_vol:.1f}% vol is very stable
-                - Smooth equity curve expected
-                - Suitable for risk-averse investors
-                - **Opportunity:** Could use moderate leverage (1.5-2x)
+                ✅ **Chiến lược biến động thấp**  
+                - Biến động {bien_dong_nam:.1f}% rất ổn định
+                - Đường equity mượt mà
+                - Phù hợp cho nhà đầu tư ngại rủi ro
+                - **Cơ hội:** Có thể sử dụng đòn bẩy vừa phải (1.5-2x)
                 """)
-            elif ann_vol < 35:
+            elif bien_dong_nam < 35:
                 st.info(f"""
-                📊 **Moderate volatility**  
-                - {ann_vol:.1f}% is typical for quant strategies
-                - Expect some monthly swings
-                - Risk-adjusted returns (Sharpe {sharpe:.2f}) are key
-                - **Position sizing:** Standard allocation OK
+                📊 **Biến động trung bình**  
+                - {bien_dong_nam:.1f}% là điển hình cho chiến lược quant
+                - Dự kiến một số dao động hàng tháng
+                - Lợi nhuận điều chỉnh rủi ro (Sharpe {sharpe:.2f}) là then chốt
+                - **Kích thước vị thế:** Phân bổ tiêu chuẩn OK
                 """)
             else:
                 st.warning(f"""
-                ⚠️ **High volatility - Manage carefully**  
-                - {ann_vol:.1f}% vol means large monthly swings possible
-                - ±{ann_vol/12:.1f}% monthly moves expected
-                - **Risk management essential:**
-                  - Reduce position sizes
-                  - Implement volatility targeting
-                  - Use wider stop-losses (avoid whipsaws)
+                ⚠️ **Biến động cao - Cần quản lý cẩn thận**  
+                - Biến động {bien_dong_nam:.1f}% nghĩa là dao động lớn hàng tháng
+                - Dao động ±{bien_dong_nam/12:.1f}% mỗi tháng
+                - **Quản lý rủi ro cần thiết:**
+                  - Giảm kích thước vị thế
+                  - Áp dụng volatility targeting
+                  - Sử dụng stop-loss rộng hơn (tránh whipsaw)
                 """)
         
         st.markdown("---")
         
-        # === SECTION 3: EQUITY CURVE ===
-        st.markdown("### Portfolio Equity Curve")
+        # === PHẦN 3: BIỂU ĐỒ EQUITY ===
+        st.markdown("### Biểu Đồ Equity Danh Mục")
         
-        equity_df['Return_Pct'] = (equity_df['Cumulative_Return'] - 1) * 100
+        df_equity['Phan_Tram_LN'] = (df_equity['Cumulative_Return'] - 1) * 100
         
-        fig = create_professional_chart(equity_df, "Cumulative Returns", "Return_Pct")
+        fig = tao_bieu_do_chuyen_nghiep(df_equity, "Lợi Nhuận Tích Lũy", "Phan_Tram_LN")
         st.plotly_chart(fig, use_container_width=True)
         
-        # Drawdown chart
-        st.markdown("### Drawdown Over Time")
-        equity_df['Peak'] = equity_df['Cumulative_Return'].cummax()
-        equity_df['Drawdown_Pct'] = ((equity_df['Cumulative_Return'] - equity_df['Peak']) / equity_df['Peak'] * 100)
+        # Biểu đồ Drawdown
+        st.markdown("### Sụt Giảm Theo Thời Gian")
+        df_equity['Dinh'] = df_equity['Cumulative_Return'].cummax()
+        df_equity['Phan_Tram_DD'] = ((df_equity['Cumulative_Return'] - df_equity['Dinh']) / df_equity['Dinh'] * 100)
         
         fig_dd = go.Figure()
         fig_dd.add_trace(go.Scatter(
-            x=equity_df.index,
-            y=equity_df['Drawdown_Pct'],
+            x=df_equity.index,
+            y=df_equity['Phan_Tram_DD'],
             fill='tozeroy',
-            name='Drawdown',
+            name='Sụt Giảm',
             line=dict(color='#c62828', width=2)
         ))
         
         fig_dd.update_layout(
-            title="Portfolio Drawdown",
-            xaxis_title="Date",
-            yaxis_title="Drawdown %",
+            title="Sụt Giảm Danh Mục",
+            xaxis_title="Ngày",
+            yaxis_title="Sụt Giảm %",
             plot_bgcolor='white',
             font=dict(family='Inter'),
             height=300
@@ -837,61 +824,54 @@ def main():
         
         st.plotly_chart(fig_dd, use_container_width=True)
         
-        # === SECTION 4: ACTIONABLE RECOMMENDATIONS ===
-        st.markdown("### 💡 Actionable Recommendations")
+        # === PHẦN 4: KHUYẾN NGHỊ HÀNH ĐỘNG ===
+        st.markdown("### 💡 Khuyến Nghị Hành Động")
         
-        recommendations = []
+        khuyen_nghi = []
         
-        # Based on Sharpe
+        # Dựa trên Sharpe
         if sharpe > 1.5:
-            recommendations.append(("✅ DEPLOY", "Strategy ready for live trading with institutional-grade Sharpe"))
+            khuyen_nghi.append(("✅ TRIỂN KHAI", "Chiến lược sẵn sàng giao dịch thực với Sharpe cấp tổ chức"))
         elif sharpe > 1.0:
-            recommendations.append(("⚠️ OPTIMIZE", "Good performance - consider DD reduction for Grade A"))
+            khuyen_nghi.append(("⚠️ TỐI ƯU", "Hiệu suất tốt - cân nhắc giảm DD để đạt Grade A"))
         else:
-            recommendations.append(("🔄 REVIEW", "Sharpe < 1.0 - revisit signal quality and combination"))
+            khuyen_nghi.append(("🔄 XEM XÉT", "Sharpe < 1.0 - xem lại chất lượng tín hiệu và cách kết hợp"))
         
-        # Based on DD
+        # Dựa trên DD
         if abs(max_dd) > 45:
-            recommendations.append(("📉 REDUCE DD", f"Implement stop-loss and volatility targeting (target: -30%)"))
+            khuyen_nghi.append(("📉 GIẢM DD", f"Áp dụng stop-loss và volatility targeting (mục tiêu: -30%)"))
         
-        # Based on Win Rate & PF
+        # Dựa trên Win Rate & PF
         if profit_factor < 1.3:
-            recommendations.append(("🎯 IMPROVE EDGE", "Profit factor low - review entry/exit timing"))
+            khuyen_nghi.append(("🎯 CẢI THIỆN LỢI THẾ", "Profit factor thấp - xem lại thời điểm vào/ra lệnh"))
         
-        # Based on volatility
-        if ann_vol > 40:
-            recommendations.append(("📊 LOWER VOL", "High volatility - reduce position sizes by 30-50%"))
+        # Dựa trên biến động
+        if bien_dong_nam > 40:
+            khuyen_nghi.append(("📊 HẠ BIẾN ĐỘNG", "Biến động cao - giảm kích thước vị thế 30-50%"))
         
-        for action, desc in recommendations:
-            st.info(f"**{action}:** {desc}")
+        for hanh_dong, mo_ta in khuyen_nghi:
+            st.info(f"**{hanh_dong}:** {mo_ta}")
         
         st.markdown("---")
         
-        # === SECTION 5: DETAILED METRICS TABLE ===
-        st.markdown("### Complete Performance Metrics")
-        st.dataframe(data['summary'], use_container_width=True, height=200)
+        # === PHẦN 5: BẢNG CHỈ SỐ CHI TIẾT ===
+        st.markdown("### Bảng Chỉ Số Hiệu Suất Đầy Đủ")
+        st.dataframe(du_lieu['tom_tat'], use_container_width=True, height=200)
     
-    # TAB 3: NEXT TRADE SIGNALS  
+    # TAB 3: TÍN HIỆU GIAO DỊCH
     with tabs[2]:
-        st.markdown('<h2>Trading Signal Analysis</h2>', unsafe_allow_html=True)
+        st.markdown('<h2>Phân Tích Tín Hiệu Giao Dịch</h2>', unsafe_allow_html=True)
         
-        # Select cluster for analysis
-        cluster_list = list(data['equity'].keys())
-        if cluster_list:
-            selected_cluster = st.selectbox(
-                "Select Cluster for Signal Analysis:",
-                cluster_list,
-                key='signal_cluster'
-            )
-            
-            # Display signal analysis
-            display_signal_analysis_tab(data, selected_cluster)
+        if du_lieu['ket_qua']:
+            display_signal_analysis_tab(du_lieu['ket_qua'], du_lieu['giao_dich'])
         else:
-            st.warning("No cluster data available")
+            st.info("Không có dữ liệu tín hiệu cho kịch bản này")
     
-    # TAB 4: AI CHAT
+    # TAB 4: TRỢ LÝ AI
     with tabs[3]:
-        chat_tab(data)
+        st.markdown('<h2>Trợ Lý AI Gemini</h2>', unsafe_allow_html=True)
+        chat_tab(du_lieu)
+
 
 if __name__ == "__main__":
     main()
