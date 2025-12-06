@@ -1,8 +1,13 @@
-# config.py
+# config.py - Configuration for Multi-Alpha Strategy
+import os
+from pathlib import Path
 
-# --- ĐƯỜNG DẪN (Sửa lại cho đúng máy bạn) ---
-INPUT_DIR = "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/ticket_selection/clusters"
-OUTPUT_DIR = "/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/MultiAlpha_Results"
+# Get the directory where this config.py file is located
+BASE_DIR = Path(__file__).parent
+
+# Paths relative to project structure
+INPUT_DIR = str(BASE_DIR.parent / "ticket_selection" / "clusters")
+OUTPUT_DIR = str(BASE_DIR / "MultiAlpha_Results")
 
 # --- THAM SỐ ALPHA ---
 WINDOW_COINT = 756

@@ -413,7 +413,11 @@ def main():
         }
         
         selected_dir = scenario_map[scenario]
-        results_dir = f'/home/tiencd123456/CF_Tien23280088_Hoang23280060-1/project/apply_strategy/{selected_dir}'
+        
+        # Use relative path from app.py location
+        from pathlib import Path
+        base_dir = Path(__file__).parent.parent.parent / "apply_strategy"
+        results_dir = str(base_dir / selected_dir)
         
         # Display scenario info
         if "Scenario 1" in scenario:
