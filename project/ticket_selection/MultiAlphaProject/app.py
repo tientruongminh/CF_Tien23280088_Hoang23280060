@@ -26,7 +26,6 @@ from metrics_config import (
 # Cấu hình trang
 st.set_page_config(
     page_title="Phân Tích Danh Mục Multi-Alpha",
-    page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -509,48 +508,48 @@ def main():
         with col1:
             st.metric("Sharpe Ratio", f"{sharpe:.2f}")
             if sharpe > 1.5:
-                st.success("🌟 Xuất sắc - Cấp độ tổ chức")
+                st.success("Xuất sắc - Cấp độ tổ chức")
             elif sharpe > 1.0:
-                st.success("✅ Tốt - Trên trung bình")
+                st.success("Tốt - Trên trung bình")
             elif sharpe > 0.5:
-                st.info("⚠️ Chấp nhận được - Dưới mục tiêu")
+                st.info("Chấp nhận được - Dưới mục tiêu")
             else:
-                st.error("❌ Kém - Cần cải thiện")
+                st.error("Kém - Cần cải thiện")
         
         with col2:
             st.metric("Tổng Lợi Nhuận", f"{tong_ln:.1f}%")
             if tong_ln > 1000:
-                st.success("🚀 Hiệu suất xuất sắc")
+                st.success("Hiệu suất xuất sắc")
             elif tong_ln > 300:
-                st.success("✅ Lợi nhuận mạnh")
+                st.success("Lợi nhuận mạnh")
             else:
-                st.info("📊 Tăng trưởng vừa phải")
+                st.info("Tăng trưởng vừa phải")
         
         with col3:
             st.metric("Sụt Giảm Tối Đa", f"{max_dd:.1f}%")
             if abs(max_dd) < 30:
-                st.success("✅ Kiểm soát tốt")
+                st.success("Kiểm soát tốt")
             elif abs(max_dd) < 50:
-                st.warning("⚠️ Rủi ro trung bình")
+                st.warning("Rủi ro trung bình")
             else:
-                st.error("📉 Rủi ro cao - Cần xem xét")
+                st.error("Rủi ro cao - Cần xem xét")
         
         with col4:
             st.metric("Tỷ Lệ Thắng", f"{ty_le_thang:.1f}%")
             if ty_le_thang > 55:
-                st.success("🎯 Sinh lời ổn định")
+                st.success("Sinh lời ổn định")
             elif ty_le_thang > 50:
-                st.info("✅ Có lợi thế nhỏ")
+                st.info("Có lợi thế nhỏ")
             else:
-                st.warning("⚠️ Cần độ chính xác cao hơn")
+                st.warning("Cần độ chính xác cao hơn")
         
         st.markdown("---")
         
         # === PHẦN 2: PHÂN TÍCH CHI TIẾT ===
-        st.markdown("### 📊 Phân Tích & Diễn Giải Hiệu Suất")
+        st.markdown("### Phân Tích & Diễn Giải Hiệu Suất")
         
         # Phân tích hiệu suất điều chỉnh rủi ro
-        with st.expander("🎯 Phân Tích Hiệu Suất Điều Chỉnh Rủi Ro", expanded=True):
+        with st.expander("Phân Tích Hiệu Suất Điều Chỉnh Rủi Ro", expanded=True):
             st.markdown(f"""
             **Sharpe Ratio: {sharpe:.2f}**
             
@@ -564,7 +563,7 @@ def main():
             
             if sharpe > 1.5:
                 st.success("""
-                ✅ **Hiệu suất cấp độ tổ chức**  
+                **Hiệu suất cấp độ tổ chức**  
                 - Chiến lược mang lại lợi nhuận điều chỉnh rủi ro xuất sắc
                 - Tương đương với các quỹ hedge fund hàng đầu (mục tiêu: Sharpe > 1.5)
                 - Ứng viên sáng giá để triển khai thực tế
@@ -572,7 +571,7 @@ def main():
                 """)
             elif sharpe > 1.0:
                 st.info("""
-                ✅ **Hiệu suất trên trung bình**  
+                **Hiệu suất trên trung bình**  
                 - Chiến lược có quản lý rủi ro tốt
                 - Vượt trội so với buy-and-hold thông thường (Sharpe ~0.5)
                 - Còn dư địa cải thiện thông qua giảm DD
@@ -580,7 +579,7 @@ def main():
                 """)
             else:
                 st.warning("""
-                ⚠️ **Cần tối ưu hóa**  
+                **Cần tối ưu hóa**  
                 - Lợi nhuận chưa xứng đáng với rủi ro
                 - Xem lại chất lượng tín hiệu và cách kết hợp
                 - Áp dụng quản lý rủi ro nghiêm ngặt hơn
@@ -593,11 +592,11 @@ def main():
             **Sortino Ratio: {sortino:.2f}** (so với Sharpe {sharpe:.2f})
             - Sortino chỉ phạt biến động chiều giảm (downside)
             - Sortino cao hơn cho thấy lợi nhuận không đối xứng (tốt!)
-            - Tỷ lệ {sortino/sharpe:.2f}x cho thấy {'xu hướng tăng mạnh ✅' if sortino/sharpe > 1.15 else 'phân phối cân bằng'}
+            - Tỷ lệ {sortino/sharpe:.2f}x cho thấy {'xu hướng tăng mạnh ' if sortino/sharpe > 1.15 else 'phân phối cân bằng'}
             """)
         
         # Phân tích lợi nhuận
-        with st.expander("💰 Phân Tích Sinh Lời"):
+        with st.expander("Phân Tích Sinh Lời"):
             cagr = tom_tat['Annual_Return_CAGR'] * 100
             so_nam = tom_tat['Trading_Years']
             
@@ -608,14 +607,14 @@ def main():
             **So Sánh Benchmark:**
             - CAGR lịch sử S&P 500: ~10%
             - CAGR của bạn: {cagr:.1f}%
-            - **Vượt trội: +{cagr-10:.1f}% hàng năm** {'🚀' if cagr > 30 else '✅' if cagr > 15 else ''}
+            - **Vượt trội: +{cagr-10:.1f}% hàng năm** {'' if cagr > 30 else '' if cagr > 15 else ''}
             
             **Điều này có nghĩa:**
             """)
             
             if cagr > 40:
                 st.success(f"""
-                🚀 **Sinh lời xuất sắc**  
+                **Sinh lời xuất sắc**  
                 - CAGR {cagr:.1f}% rất hiếm (top 1% chiến lược)
                 - $10,000 → ${10000 * (1 + cagr/100)**so_nam:,.0f} trong {so_nam:.0f} năm
                 - Vượt trội hầu hết các quỹ chuyên nghiệp
@@ -623,7 +622,7 @@ def main():
                 """)
             elif cagr > 20:
                 st.success(f"""
-                ✅ **Hiệu suất mạnh**  
+                **Hiệu suất mạnh**  
                 - CAGR {cagr:.1f}% vượt mục tiêu tổ chức (15-20%)
                 - $10,000 → ${10000 * (1 + cagr/100)**so_nam:,.0f} trong {so_nam:.0f} năm
                 - Tương đương với các quỹ quant thành công
@@ -631,14 +630,14 @@ def main():
                 """)
             else:
                 st.info(f"""
-                📊 **Lợi nhuận vừa phải**  
+                **Lợi nhuận vừa phải**  
                 - CAGR {cagr:.1f}% vượt S&P500 nhưng còn dư địa cải thiện
                 - Cân nhắc tăng alpha hoặc sử dụng đòn bẩy
                 - Có thể phù hợp với nhà đầu tư thận trọng
                 """)
         
         # Phân tích rủi ro
-        with st.expander("📉 Phân Tích Sụt Giảm & Rủi Ro"):
+        with st.expander("Phân Tích Sụt Giảm & Rủi Ro"):
             dd_tb = tom_tat['Avg_Drawdown'] * 100
             calmar = tom_tat.get('Calmar_Ratio', cagr / abs(max_dd) * 100)
             
@@ -652,7 +651,7 @@ def main():
             
             if abs(max_dd) < 30:
                 st.success("""
-                ✅ **Kiểm soát rủi ro xuất sắc**  
+                **Kiểm soát rủi ro xuất sắc**  
                 - Max DD < 30% là ngoại lệ cho chiến lược quant
                 - Xác suất thua lỗ nghiêm trọng thấp
                 - Phù hợp cho vốn tổ chức
@@ -660,7 +659,7 @@ def main():
                 """)
             elif abs(max_dd) < 50:
                 st.warning(f"""
-                ⚠️ **Mức độ rủi ro trung bình**  
+                **Mức độ rủi ro trung bình**  
                 - Max DD {abs(max_dd):.1f}% là điển hình cho chiến lược quant
                 - Lập kế hoạch cho tình huống xấu nhất: -50% đến -60% có thể xảy ra
                 - **Chiến lược giảm thiểu:**
@@ -671,7 +670,7 @@ def main():
                 """)
             else:
                 st.error("""
-                📉 **Rủi ro cao - Cần hành động**  
+                **Rủi ro cao - Cần hành động**  
                 - Drawdown > 50% rất khó chịu về mặt tâm lý
                 - Hầu hết nhà đầu tư bỏ cuộc ở mức -40% đến -50%
                 - **Hành động ngay:**
@@ -688,7 +687,7 @@ def main():
             """)
         
         # Chất lượng giao dịch
-        with st.expander("🎲 Chất Lượng & Tính Nhất Quán Giao Dịch"):
+        with st.expander("Chất Lượng & Tính Nhất Quán Giao Dịch"):
             profit_factor = tom_tat.get('Profit_Factor', 1.3)
             ty_le_ln_lo = tom_tat.get('Win_Loss_Ratio', 1.1)
             
@@ -703,7 +702,7 @@ def main():
             st.markdown(f"""
             **Phân Tích Tỷ Lệ Thắng:**
             - {ty_le_thang:.1f}% giao dịch có lãi
-            - {'Chiến lược độ chính xác cao ✅' if ty_le_thang > 55 else 'Cách tiếp cận cân bằng' if ty_le_thang > 45 else 'Tỷ lệ thắng thấp ⚠️'}
+            - {'Chiến lược độ chính xác cao ' if ty_le_thang > 55 else 'Cách tiếp cận cân bằng' if ty_le_thang > 45 else 'Tỷ lệ thắng thấp '}
             - {100 - ty_le_thang:.1f}% là thua lỗ (bình thường cho mean-reversion)
             
             **Profit Factor: {profit_factor:.2f}**
@@ -712,46 +711,46 @@ def main():
             """)
             
             if profit_factor > 1.5:
-                st.success("🌟 Xuất sắc - Giao dịch thắng lớn hơn đáng kể")
+                st.success("Xuất sắc - Giao dịch thắng lớn hơn đáng kể")
             elif profit_factor > 1.2:
-                st.success("✅ Tốt - Bền vững về dài hạn")
+                st.success("Tốt - Bền vững về dài hạn")
             elif profit_factor > 1.0:
-                st.warning("⚠️ Biên lợi nhuận mỏng - Rủi ro chi phí giao dịch cao")
+                st.warning("Biên lợi nhuận mỏng - Rủi ro chi phí giao dịch cao")
             else:
-                st.error("❌ Chiến lược thua lỗ - Cần xem xét ngay")
+                st.error("Chiến lược thua lỗ - Cần xem xét ngay")
             
             st.markdown(f"""
             **Tỷ Lệ Lãi/Lỗ: {ty_le_ln_lo:.2f}**
             - Lãi trung bình gấp {ty_le_ln_lo:.2f}x lỗ trung bình
-            - {'Payoff không đối xứng - lý tưởng ✅' if ty_le_ln_lo > 1.5 else 'Lãi/lỗ cân bằng' if ty_le_ln_lo > 0.8 else 'Lỗ lớn hơn lãi ⚠️'}
+            - {'Payoff không đối xứng - lý tưởng ' if ty_le_ln_lo > 1.5 else 'Lãi/lỗ cân bằng' if ty_le_ln_lo > 0.8 else 'Lỗ lớn hơn lãi '}
             
             **Insight Triết Lý Giao Dịch:**
             """)
             
             if ty_le_thang > 55 and ty_le_ln_lo > 1.0:
                 st.success("""
-                💎 **Tỷ lệ thắng cao + Payoff dương = Sự kết hợp lý tưởng**  
+                **Tỷ lệ thắng cao + Payoff dương = Sự kết hợp lý tưởng**  
                 - Bạn thắng thường xuyên VÀ thắng lớn
                 - Hiếm trong giao dịch định lượng
                 - Cho thấy chất lượng tín hiệu mạnh
                 """)
             elif ty_le_thang < 50 and ty_le_ln_lo > 1.5:
                 st.info("""
-                🎯 **Hồ sơ trend-following điển hình**  
+                **Hồ sơ trend-following điển hình**  
                 - Nhiều thua lỗ nhỏ, ít thắng lớn
                 - Đòi hỏi kiên nhẫn và kỷ luật
                 - Quan trọng: Đừng cắt lãi sớm
                 """)
             elif ty_le_thang > 55 and ty_le_ln_lo < 1.0:
                 st.warning("""
-                ⚠️ **Hồ sơ mean-reversion có rủi ro**  
+                **Hồ sơ mean-reversion có rủi ro**  
                 - Thắng nhỏ thường xuyên, thua lớn đôi khi
                 - Cảnh báo: Dễ bị tổn thương bởi tail event
                 - **Hành động:** Áp dụng stop-loss nghiêm ngặt
                 """)
         
         # Phân tích biến động
-        with st.expander("📊 Phân Tích Biến Động & Ổn Định"):
+        with st.expander("Phân Tích Biến Động & Ổn Định"):
             bien_dong_nam = tom_tat['Annual_Volatility'] * 100
             
             st.markdown(f"""
@@ -766,7 +765,7 @@ def main():
             
             if bien_dong_nam < 20:
                 st.success(f"""
-                ✅ **Chiến lược biến động thấp**  
+                **Chiến lược biến động thấp**  
                 - Biến động {bien_dong_nam:.1f}% rất ổn định
                 - Đường equity mượt mà
                 - Phù hợp cho nhà đầu tư ngại rủi ro
@@ -774,7 +773,7 @@ def main():
                 """)
             elif bien_dong_nam < 35:
                 st.info(f"""
-                📊 **Biến động trung bình**  
+                **Biến động trung bình**  
                 - {bien_dong_nam:.1f}% là điển hình cho chiến lược quant
                 - Dự kiến một số dao động hàng tháng
                 - Lợi nhuận điều chỉnh rủi ro (Sharpe {sharpe:.2f}) là then chốt
@@ -782,7 +781,7 @@ def main():
                 """)
             else:
                 st.warning(f"""
-                ⚠️ **Biến động cao - Cần quản lý cẩn thận**  
+                **Biến động cao - Cần quản lý cẩn thận**  
                 - Biến động {bien_dong_nam:.1f}% nghĩa là dao động lớn hàng tháng
                 - Dao động ±{bien_dong_nam/12:.1f}% mỗi tháng
                 - **Quản lý rủi ro cần thiết:**
@@ -827,29 +826,29 @@ def main():
         st.plotly_chart(fig_dd, use_container_width=True)
         
         # === PHẦN 4: KHUYẾN NGHỊ HÀNH ĐỘNG ===
-        st.markdown("### 💡 Khuyến Nghị Hành Động")
+        st.markdown("### Khuyến Nghị Hành Động")
         
         khuyen_nghi = []
         
         # Dựa trên Sharpe
         if sharpe > 1.5:
-            khuyen_nghi.append(("✅ TRIỂN KHAI", "Chiến lược sẵn sàng giao dịch thực với Sharpe cấp tổ chức"))
+            khuyen_nghi.append(("TRIỂN KHAI", "Chiến lược sẵn sàng giao dịch thực với Sharpe cấp tổ chức"))
         elif sharpe > 1.0:
-            khuyen_nghi.append(("⚠️ TỐI ƯU", "Hiệu suất tốt - cân nhắc giảm DD để đạt Grade A"))
+            khuyen_nghi.append(("TỐI ƯU", "Hiệu suất tốt - cân nhắc giảm DD để đạt Grade A"))
         else:
-            khuyen_nghi.append(("🔄 XEM XÉT", "Sharpe < 1.0 - xem lại chất lượng tín hiệu và cách kết hợp"))
+            khuyen_nghi.append(("XEM XÉT", "Sharpe < 1.0 - xem lại chất lượng tín hiệu và cách kết hợp"))
         
         # Dựa trên DD
         if abs(max_dd) > 45:
-            khuyen_nghi.append(("📉 GIẢM DD", f"Áp dụng stop-loss và volatility targeting (mục tiêu: -30%)"))
+            khuyen_nghi.append(("GIẢM DD", f"Áp dụng stop-loss và volatility targeting (mục tiêu: -30%)"))
         
         # Dựa trên Win Rate & PF
         if profit_factor < 1.3:
-            khuyen_nghi.append(("🎯 CẢI THIỆN LỢI THẾ", "Profit factor thấp - xem lại thời điểm vào/ra lệnh"))
+            khuyen_nghi.append(("CẢI THIỆN LỢI THẾ", "Profit factor thấp - xem lại thời điểm vào/ra lệnh"))
         
         # Dựa trên biến động
         if bien_dong_nam > 40:
-            khuyen_nghi.append(("📊 HẠ BIẾN ĐỘNG", "Biến động cao - giảm kích thước vị thế 30-50%"))
+            khuyen_nghi.append(("HẠ BIẾN ĐỘNG", "Biến động cao - giảm kích thước vị thế 30-50%"))
         
         for hanh_dong, mo_ta in khuyen_nghi:
             st.info(f"**{hanh_dong}:** {mo_ta}")
